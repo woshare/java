@@ -1,6 +1,7 @@
 # Java，spring和springboot学习中的核心问题
->1，多阅读官网上的文档：https://spring.io/projects/spring-boot             
->2，太习以为常了，以至于觉得它应该就是如此---需要多琢磨，知其然知其所以然           
+>1，多阅读官网上的文档：https://spring.io/projects/spring-boot          
+>2,https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/htmlsingle/#transaction-declarative-annotations                     
+>3，太习以为常了，以至于觉得它应该就是如此---需要多琢磨，知其然知其所以然           
 
 ### 1，注解
 >1，注解是表述代码的代码，例如注释是向人解释代码的意思，注解是向编译器虚拟机解释说明，比如@Override，是告诉编译器它所注解的的方法是重写父类中的方法，这样编译器会去检查父类是否存在这个方法，以及方法签名                  
@@ -84,5 +85,14 @@
 ### 7，spring boot中常规项目架构是怎么样的
 
 ### 8，异常捕获与处理
+
+### 事务@Transactional
+>1，spring boot 会自动配置一个 DataSourceTransactionManager，我们只需在方法（或者类）加上 @Transactional 注解，就自动纳入 Spring 的事务管理了     
+>2，@Transactional 注解只能应用到 public 方法才有效         
+>3，在类上加了注解@Transactional("transactionManager") 和@Service，才让加在类中方法上的事务生效       
+
+
+
+
 
 
