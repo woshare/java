@@ -26,6 +26,15 @@
 
 ## AOP:aspect-oriented programming,面向切面编程
 
+### 常用AOP通知类型
+>1，before(前置通知)：  在方法开始执行前执行
+>2，after(后置通知)：  在方法执行后执行
+>3，afterReturning(返回后通知)：   在方法返回后执行
+>4，afterThrowing(异常通知)： 在抛出异常时执行
+>5，around(环绕通知)：  在方法执行前和执行后都会执行
+
+### 执行顺序
+>around > before > around > after > afterReturning
 
 ## 容器：Spring框架的核心
 >1，在基于Spring的应用中，你的应用对象生存于Spring容器（container）中   
@@ -314,22 +323,35 @@ public class OrdersDataSourceConfig {
 ## 微服务
 * [还不错的学习资源](https://github.com/forezp/SpringCloudLearning)
 
->1，在微服务架构中，需要几个基础的服务治理组件，包括 **服务注册与发现、服务消费、负载均衡、断路器、智能路由、配置管理**等，由这几个基础组件相互协作，共同组建了一个简单的微服务系统   >2，eureka是一个服务注册和发现模块 
+>1，在微服务架构中，需要几个基础的服务治理组件，包括 **服务注册与发现、服务消费、负载均衡、断路器、智能路由、配置管理**等，由这几个基础组件相互协作，共同组建了一个简单的微服务系统       
+>2，eureka是一个服务注册和发现模块 
 >3，ribbon是一个负载均衡客户端（ribbon+restTemplate），Feign是一个声明式的伪Http客户端，它使得写Http客户端变得更简单，Feign默认集成了ribbon 
->4，Zuul的主要功能是路由转发和过滤器    
->5，Spring Cloud Sleuth 主要功能就是在分布式系统中提供追踪解决方案，并且兼容支持了zipkin     
+>4，Zuul的主要功能是路由转发和过滤器，API Gateway，可以作为资源的统一访问入口，同时也可以在网关做一些权限校验等类似的功能         
+>5，Spring Cloud Sleuth 主要功能就是在分布式系统中提供追踪解决方案，并且兼容支持了zipkin
+>6，Hystrix：服务之间调用，一个服务失效导致其他服务也不可用，服务雪崩效应，Hystrix提供熔断机制，当调用一个服务N次，不响应，则避免调用端持续等待     
+>7，Sleuth和Zipkin：为服务之间调用提供链路追踪
 
 ![Alt text](./micro-service-simple-struct.png "微服务简单框架")
 
+![Alt text](./spring_cloud_structure.png "微服务框架")
 
 ### 配置服务中心
 ![Alt text](./configServerClient.png "配置服务中心原理")
 
 
 
+### 拦截器和过滤器
+>1，过滤器和拦截器触发时机不一样，过滤器是在请求进入容器后，但请求进入servlet之前进行预处理的。请求结束返回也是，是在servlet处理完后，返回给前端之前  
+>2，拦截器可以获取IOC容器中的各个bean，而过滤器就不行，因为拦截器是spring提供并管理的，spring的功能可以被拦截器使用，在拦截器里注入一个service，可以调用业务逻辑。而过滤器是JavaEE标准，只需依赖servlet api ，不需要依赖spring    
+>3，如果是非spring项目，那么拦截器不能用，只能使用过滤器。
+>4，如果是处理controller前后，既可以使用拦截器也可以使用过滤器。
+>5，如果是处理dispaterServlet前后，只能使用过滤器
 
+![Alt text](./interceptor-filter-handle-scope.png "拦截器和过滤器处理时机和范围")
 
+![Alt text](./interceptor-filter-handle-process.png "拦截器和过滤器处理流程")
 
+![Alt text](./filter-interceptor-controllerAdvice-aspect-controller.png "处理时机和范围")
 
 ## 注解篇（重点）
 >1，框架提供的系统注解

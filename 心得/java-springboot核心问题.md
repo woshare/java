@@ -9,21 +9,31 @@
 >3，除了向编译器等传递一些信息，我们也可以使用注解生成代码。比如我们可以使用注解来描述我们的意图，然后让注解解析工具来解析注解，以此来生成一些”模板化“的代码，来避免一些重复的工作                          
 >4，注解是向编译器虚拟机解释说明，目的是为当前读取该注解的程序提供判断依据，比如程序只要读到加了@Test的方法，就知道该方法是待测试方法，又比如@Before注解，程序看到这个注解，就知道该方法要放在@Test方法之前执行。                               
 
-#### 参考链接：https://www.zhihu.com/question/47449512　写的挺好的
+#### 参考链接：
+* [注解详解](https://www.zhihu.com/question/47449512) 
+* [深入理解注解与自定义](https://www.cnblogs.com/peida/archive/2013/04/24/3036689.html)
+* [编译时注解](https://juejin.im/post/5d1c6806f265da1b8608a2a8) 
+* [编译时注解](https://blog.csdn.net/fei20121106/article/details/73742537) 
+
 
 #### 分类
 >1，自定义注解、JDK内置注解、还有第三方框架提供的注解
 
-#### 创建一个注解类：1，所有的方法均没有方法体且只允许public和abstract这两种修饰符号（不加修饰符缺省为public），注解方法不允许有throws子句 2，注解方法的返回值只能为以下几种：原始数据类型, String, Class, 枚举类型，注解和它们的一维数组，可以为方法指定默认返回值               
->@Retention(RetentionPolicy.RUNTIME) //@Retention用来说明该注解类的生命周期                 
->@Target({ElementType.FIELD,ElementType.METHOD}) //@Target来声明注解目标              
+#### 创建一个注解类：
+>1，所有的方法均没有方法体且只允许public和abstract这两种修饰符号（不加修饰符缺省为public），注解方法不允许有throws子句 
+>2，注解方法的返回值只能为以下几种：原始数据类型, String, Class, 枚举类型，注解和它们的一维数组，可以为方法指定默认返回值          
+
+#### 注解类元素
+>1，@Retention(RetentionPolicy.RUNTIME) //@Retention用来说明该注解类的生命周期                 
+>2，@Target({ElementType.FIELD,ElementType.METHOD}) //@Target来声明注解目标              
 >public @interface Seven { //创建一个注解,用关键字@interface来声明            
 >          
 >    public String value() default "小黑";            
 >            
 >    public String Property() default "无属性";          
 >}             
-
+>3，@Documented：标注为公共API，因此可以被例如javadoc此类的工具文档化    
+>4，@Inherited：阐述了某个被标注的类型是被继承的，子类可以继承这个annotation      
 
 >@Seven(value = "Lumia")         
 >private String name;               
@@ -45,6 +55,16 @@
 >1,SOURCE：表示在编译时这个注解会被移除，不会包含在编译后产生的class文件中               
 >2,CLASS：表示这个注解会被包含在class文件中，但在运行时会被移除            
 >3,RUNTIME：表示这个注解会被保留到运行时，在运行时可以JVM访问到，我们可以在运行时通过反射解析这个注解。                   
+
+### 注解处理器
+>1，运行时注解是在程序运行时通过反射获取注解然后处理的
+>2，编译时注解是程序在编译期间通过注解处理器处理的
+![Alt text](./annotation-proccessor.png "注解扫描处理流程")
+
+#### 注解处理器-Element 
+>1，所有被注解标注的部分都会被解析成element
+>2，roundEnvironment的getElementsAnnotatedWith方法就可以获取到element的set，element既可能是类，也可能是类属性，还可能是方法，和ElementType对应      
+![Alt text](./annotation-processor-element.png "注解解析成element")
 
 #### @Target 声明注解目标 ElementType枚举类型
 >1,TYPE：表示可以用来修饰类、接口、注解类型或枚举类型             
@@ -73,6 +93,11 @@
 
 
 ### 2，反射
+
+#### 反射与Mirror机制
+>1，传统的反射机制将自描述与其他操作合并在一起    
+>2，Mirror机制将自描述跟其他操作隔离，自描述部分是Meta level,其他部分是Base level     
+![Alt text](./reflect-mirror.png "反射-Mirror机制")
 
 ### 3，AOP,面向切面编程怎么实现？
 

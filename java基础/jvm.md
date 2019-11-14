@@ -64,3 +64,11 @@
 >2，java ME(micro edition)：移动终端平台
 >3，java SE(standard edition)：桌面级应用
 >4，java EE（enterprise edition）：多层架构的企业应用
+
+## 内存管理与分配
+
+### 并发内存分配，线程安全问题：同时对对象A，B分配内存，可能会争用同一块内存
+>1，CAS失败重试机制，保持原子性
+>2，按线程，在不同的内存空间分配内存，即为本地线程分配缓冲TLAB（thread local allocation buffer）
+
+### 引用：强引用>软引用>弱引用>虚引用
