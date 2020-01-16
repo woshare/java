@@ -96,7 +96,7 @@
 >13，方法行数不超过80，因为人的短期记忆极限是3个屏幕的内容      
 >14，在命名时，应当在不影响表意的情况下适当精简描述语旬长度（**通常控制在5 个单词内**）       
 
-### 异常分类
+### 异常分类：主流观点是，可恢复的、业务类的异常用checked exception，不可恢复的异常用unchecked exception，如数据库连接失败、http调用超时   
 >1，Throwable---》1）Error（致命错误，OutofMemoryError）和Exception（非致命错误），Exception---》checked异常和unchecked异常（RuntimeException）
 >2，当遇到需要处理异常的场景时，要明确该异常属于哪种类型，是需要调用方关注并处理的checked 异常， 还是由更高层次框架处理的unchecked 异常   
 >3，try-catch-finally，注意， **finally是在return表达式运行后执行的**， 此时将要return 的结果已经被暂存起来， 待finally 代码块执行结束后再将之前暂存的结果返回     
@@ -120,6 +120,9 @@
 >全小写的class 是关键字，用来定义类，而首字母大写的Class，它是所有class的类    
 >类加载是一个将.class字节码文件实例化成Class对象并进行相关初始化的过程         
 
+* [jvm重点学习](https://www.zhihu.com/question/20097631)
+![Alt text](./jvm-performance-optimization-map.jpg "jvm性能优化")
+
 #### 源码转字节码过程
 ![Alt text](./jvm-source-code-to-bytecode.png "源码转字节码过程")
 
@@ -135,6 +138,17 @@
 
 ![Alt text](./JIT-compile.png "即时编译流程")
 
+### JVM运行时数据区
+>1，方法区：线程共享，存储jvm加载的类信息，常亮，静态变量，即时编译后的代码等数据，JVM堆的一个逻辑部分
+>2，jvm栈：线程私有，存储局部变量表，操作数栈，动态链接，方法出口等信息
+>3，本地方法栈：native方法服务
+>4，jvm堆：新生代+老生代
+>5，程序计数器：当前线程执行的字节码的行号指示器，线程私有
+>6，StackOverflowErr：递归深度大于jvm允许的最大值
+>7，OOM：堆内存分配不足
+>8，运行时常量池：方法区的一部分，存放各种字面量和符号引用
+>9，直接内存
+![jvm运行时数据区](./jvm-runtime-data-area.png "jvm运行时数据区")
 
 ### JVM 内存布局（程序计数器，本地方法栈，虚拟机栈，java堆，元数据区（方法区，运行时常量池））
 >直接内存：不是jvm规范中的内存区域，在jdk1.4中更新接入了NIO（New Input/Output），引入了基于通道和缓冲区的I/O方式，可以通过Native函数库有直接分配堆外内存，用过一个存储在java堆中的DirectByteBuffer对象引用操作，在某些场景下能显著提高性能
@@ -142,12 +156,14 @@
 
 >1，**Heap是OOM故障最主要的发源地**，它存储着几乎所有的实例对象，堆由垃圾收集器自动回收，堆区由各子线程共享使用   
 >2，在通常情况下，服务器在运行过程中，堆空间不断地扩容与回缩，势必形成不必要的系统压力，所以在线上生产环境中，JVM的Xms和Xmx设置成1样大小，避免在GC后调整堆大小时带来的额外压力  
->3，**新生代＝1个Eden区＋2个Survivor区**
+>3，**新生代＝1个Eden区＋2个Survivor区 （据统计，Eden：Survivor=8：1）**
 >4，**绝大部分对象在Eden区生成**
 >5，当 **Eden区装填满**的时候，会触发YoungGarbage Collection，即YGC，**垃圾回收的时候，在Eden区实现清除策略**，**没有被引用的对象则直接回收，依然存活的对象会被移送到Survivor区**
 >6，JVM中的虚拟机栈是描述Java方法执行的内存区域，它是 **线程私有的**，栈中的元素用于支持虚拟机进行方法调用，每个方法从开始调用到执行完成的过程，就是栈帧从入栈到出栈的过程        
 
 #### 对象分配与简要GC流程
+**对象主要在新生代的Eden区上分配，如果启用了本地线程分配缓冲，将按线程优先在TLAB上分配，少数情况会在老年代上分配，分配规则不是固定的，取决于当前使用哪一种垃圾收集器组合，以及虚拟机和内存的相关参数**
+
 ![Alt text](./jvm-gc.png "对象分配与简要GC流程图")
 
 >1，如果Survivor区无法放下，或者超大对象的阈值超过上限，则尝试在老年代中进行分配        
@@ -157,6 +173,119 @@
 >5，出错时的堆内信息对解决问题非常有帮助，所以给JVM设置运行参数－XX:+HeapDumpOnOutOfMemoryError，让JVM遇到OOM异常时能输出堆内信息，特别是对相隔数月才出现的OOM 异常尤为重要      
 >6，**在不同的JVM实现及不同的回收机制中，堆内存的划分方式是不一样的**
 
+### 判断对象是否可回收
+>1，引用计数算法
+>2，可达性分析算法：1，对执行时间敏感，这项工作必须在能确保 **一致性的快照**中进行，不可以出现分析过程中对象引用关系还在不断变化的情况，不然无法保证分析结果的准确性，即GC进行时，必须停顿所有java执行线程（stop the world），即使号称不会发生停顿的CMS收集器中，枚举根节点也必须要停顿
+
+###安全点 解决如何进入GC的问题
+>1，Hotspot使用一组OopMap的数据结构来获知哪些地方存放着对象引用，在类加载完成的时候，HotSpot就把对象内什么偏移量上是什么类型的数据计算出来，用以检查执行上下文和全局引用情况
+>2，在这特定的位置，即安全点，才能停顿下来开始GC
+
+>3，问题1：其实还是不太明白为什么，只知道是这样，不知道为什么，应该要研究一下jvm，知其然知其所以然，能理解并想明白为什么，方证大道
+
+### 安全区域
+>1，当线程处于sleep或Block状态，线程无法响应JVM的中断请求，跑去安全点中断挂起，JVM也不太可能等线程获得CPU，则需要安全区域来解决这个问题
+>2，线程执行到safe region中的代码，先标识自己进入了safe region，JVM在GC时，不管safe region的线程，线程要离开safe region时，检查系统是否完成了GC，完成了则继续执行，否则，等待可以安全离开safe region的信号
+
+### 两种方案，在GC时让所有线程都跑到安全点
+>1，抢先式中断：几乎没有虚拟机在采用。GC时，1，所有线程中断，不在安全点上，恢复线程，让其跑到安全点上
+>2，主动式中断：需要GC时，设置一个标志，各个线程主动轮询这个标志，发现中断标志位真则自己挂起
+
+### gc算法
+>1，标记-清除：内存碎片
+>2，复制算法：内存分配时，分配两块一样大小的内存，只使用一块，当回收时，拷贝一块中的存活对象到另一块中，再把刚使用的那一块内存一次清理掉
+>3，标记-整理：所有存活对象，向一端移动
+>4，分代收集算法
+
+### 垃圾收集器
+>1，serial
+>2，parnew
+>3，parallel scavenge：目标是可控制吞吐量（=运行用户代码时间/（运行用户代码时间+垃圾收集时间）），其他垃圾收集器是为了缩短垃圾收集停顿时间（stop the world），新生代的parallel scavenge垃圾收集器处于比较尴尬状态，因为如果新生代垃圾收集器是parallel scavenge，那老年代只能是serial old，没法和CMS配合工作
+>4，serial old
+>5，parallel old
+>6，cms：concurrent mark sweep（并发标记-清除）：垃圾收集线程和用户线程基本同时工作，并发手机，低停顿，也叫Concurrent Low Pause Collector
+>7,G1
+
+![Alt text](./hotspot-collectors.png "hotspot虚拟机的垃圾收集器")
+
+![Alt text](./serial-collector.png "serial垃圾收集器（单线程）-stop the world")
+
+![Alt text](./ParNew-collector.png "parnew垃圾收集器-多线程serial")
+
+![Alt text](./parallel-scavenge-parallel-old-collector.png "parallel-scavenge/parallel-old垃圾收集器") 
+
+#### CMS步骤
+**初始标记--->并发标记--->重新标记--->并发清除**
+>1，初始标记：标记一下GC Roots能直接关联的对象，需要stop the world
+>2，并发标记：GC Roots Tracing
+>3，重新标记：为了 **修正并发标记** 期间因用户程序继续运作导致的标记产生变动的那部分对象的标记记录，需要stop the world
+>4，并发标记和并发清除耗时较长，并且可以与用户程序并发执行
+
+![Alt text](./CMS-collector.png "Concurrent Mark Sweep收集器")
+
+#### CMS的三个缺点
+>1，对CPU资源敏感，虽然并发，但是也可能和用户程序抢占CPU等资源，导致用户程序执行速度忽然很慢
+>2，无法处理浮动垃圾，可能出现Concurrent Mode Failure，而导致Full GC。浮动垃圾：在标记过程之后，用户程序运行导致的新的垃圾。在垃圾收集阶段，用户程序还在运行，需要给用户程序预留空间供其使用，当预留的内存，无法满足程序需要的时候，就会 **Concurrent Mode Failure**，则会临时启动Serial old重新来对老年代进行垃圾收集，停顿时间长
+>3，空间碎片，这是由标记-清除算法，所遗留的问题
+
+#### G1步骤：初始标记--->并发标记--->最终标记--->筛选回收
+>1，初始标记：标记一下GC Roots能直接关联的对象并修改TAMS值（Next top at mark start），需要stop the world
+>2，并发标记：GC Roots对堆中对象可达性分析，找出活的对象，可并发执行
+>3，最终标记：为了 **修正并发标记** 期间因用户程序继续运作导致的标记产生变动的那部分对象的标记记录，需要stop the world，可并发执行
+>4，筛选回收：首先对Region进行回收价值和成本排序，根据用户期望的GC停顿时间，制定回收计划
+
+![Alt text](./G1-collector.png "G1垃圾收集器")
+
+#### 理解GC日志
+>1，[ParNew: 352257K->20422K(368640K), 0.0321769 secs] ：GC区域和GC收集器，GC前该内存区域已使用容量->GC后该内存区域已使用容量（该内存区域总容量），gc时间
+>2，[Times: user=0.12 sys=0.00, real=0.03 secs] ：user：用户态消耗CPU时间，内核态消耗CPU时间，事件从开始到结束所经过的墙钟时间
+
+### JNI 与 native 关键字
+
+![Alt text](./JNI-C-DLL.png "JNI-native关键字")
+
+### linux下编译jni
+#### 1.编写带有native声明的java类，HelloWorld.java 
+```
+public class HelloWorld{
+    public native void sayHelloWorld();
+
+    static {
+        System.loadLibrary("HelloWorldImpl");//加载动态文件
+    }
+    
+    public static void main(String[] args){
+        HelloWorld helloWorld=new HelloWorld();
+        helloWorld.sayHelloWorld();
+    
+    }
+
+}
+```
+#### 2.使用javac生成HelloWorld.class
+>1，javac  HelloWorld.class  或者  javac -classpath . HelloWorld.class
+
+#### 3.使用javah -jni java类生成扩展名为h的头文件
+>1,javah -jni -verbose -classpath . HelloWorld  得到HelloWorld.h
+
+#### 4使用C/C++实现本地方法，创建HelloWorldImpl.cpp
+```
+#include"jni.h"
+#include"HelloWorld.h"
+#include<stdio.h>
+
+JNIEXPORT void JNICALL Java_HelloWorld_sayHelloWorld(JNIEnv *, jobject){
+        printf("hello world!\n");
+        return;
+}
+```
+#### 5 将本地方法编写的文件生成动态链接库
+>1，gcc  -I/$JAVA_HOME/include -I/$JAVA_HOME/include/darwin/ -I/$JAVA_HOME/include/linux/ -fPIC -shared HelloWorldImpl.cpp -o libHelloWorldImpl.so  
+>2，这个动态so文件名和HelloWorld.java 中System.loadLibrary 一致，按照linux中的约定lib会被忽略
+
+#### 6执行HelloWorld
+>1，java -Djava.library.path=/home/liujun/testjni/test2/ -classpath . HelloWorld   
+>2，/home/liujun/testjni/test2/是写HelloWorld.java的文件夹也是动态库所在文件夹，要么就把动态so文件拷到虚拟机默认的java.library.path文件夹下
 
 #### Java类加载器：加载，链接，初始化  
 
@@ -169,14 +298,14 @@
 >第二、三层类加载器为Java 语言实现，用户也可以自定义类加载器       
 
 >1，第一步， Load 阶段读取类文件产生二进制流，并转化为特定的数据结构，初步校验cafe babe 魔法数、常量池、文件长度、是否有父类等，然后创建对应类的java.Jang.Class实例     
->2，第二步， Link 阶段包括验证、准备、解析三个步骤。验证是更详细的校验，比如fi nal 是否合规、类型是否正确、静态变量是否合理等i 准备阶段是为静态变量分配内存，并设定默认值，解析类和方法确保类与类之间的相互引用正确性，完成内存结构布局          
+>2，第二步， Link 阶段包括验证、准备、解析三个步骤。验证是更详细的校验，比如final 是否合规、类型是否正确、静态变量是否合理等i 准备阶段是为静态变量分配内存，并设定默认值，解析类和方法确保类与类之间的相互引用正确性，完成内存结构布局          
 >3，第三步， Init 阶段执行类构造器＜clinit>方法，如果赋值运算是通过其他类的静态方法来完成的，那么会马上解析另外一个类，在虚拟机栈中执行完毕后通过返回值进行赋值             
 
 ![Alt text](./java-class-loader.png "Java类加载过程")
 
 ![Alt text](./class-loader.png "双亲委派模型")
 
->如果想在启动时观察加载了哪个j缸包中的哪个类， 可以增加Jα：＋Tra臼ClassLoading参数， 此参数在解决类冲突时非常实用， 毕竟不同的JVM 环境对于加载类的顺序并非是一致的  
+>如果想在启动时观察加载了哪个包中的哪个类， 可以java：TrashClassLoading参数， 此参数在解决类冲突时非常实用， 毕竟不同的JVM 环境对于加载类的顺序并非是一致的  
 
 **查看Bootstrap 所有已经加载的类库：**
 ```
@@ -218,7 +347,7 @@ public class CustomClassLoader extends ClassLoader {
     }
 }
 ```
->由于中间件一般都有自己的依赖jar 包，在同个工程内引用多个框架时， 往往被迫进行类的仲裁。按某种规则jar 包的版本被统←指定，导致某些类存在包路径、类名相同的情况， 就会引起类冲突，导致应用程序出现异常。主流的容器类框架都会自定义类加载器，实现不同中间件之间的类隔离， 有效避免了类冲突。
+>由于中间件一般都有自己的依赖jar 包，在同个工程内引用多个框架时， 往往被迫进行类的仲裁。按某种规则jar 包的版本被统一指定，导致某些类存在包路径、类名相同的情况， 就会引起类冲突，导致应用程序出现异常。主流的容器类框架都会自定义类加载器，实现不同中间件之间的类隔离， 有效避免了类冲突。
 
 ### 线程与内存
 >从线程共享的角度来看，堆和元空间是所有线程共享的，而虚拟机枝、本地方法枝、程序计数器是线程内部私有的，从这个角度看下Java 内存结构   
@@ -231,7 +360,7 @@ public class CustomClassLoader extends ClassLoader {
 >1.1，确认类元信息是否存在。当 **JVM接收到new 指令**时，首先在metaspace 内检查需要创建的类元信息是否存在                        
 >1.2，若不存在，那么在双亲委派模式下，使用当前类加载器以 **ClassLoader＋包名＋类名为Key 进行查找对应的.class 文件**                
 >1.3，如果没有找到文件，则抛出ClassNotFoundException 异常，如果找到，则进行类加载，并生成对应的Class 类对象           
->2，分配对象内存。首先计算对象占用空间大小，如果实例成员变量是引用变量，仅分配引用变量空间即可，即4 个字节大小，接着在堆中划分一块内存给新对象。在分配内存空间时，需要进行同步操作，比如采用CAS(CompareAnd Swap）失败重试、区域加锁等方式保证分配操作的原子性                
+>2，分配对象内存。首先计算对象占用空间大小，如果实例成员变量是引用变量，仅分配引用变量空间即可，即4 个字节大小，接着在堆中划分一块内存给新对象。在分配内存空间时，需要进行同步操作，比如**采用CAS(CompareAnd Swap）失败重试、区域加锁等方式保证分配操作的原子性**                
 >3，设定默认值。成员变量值都需要设定为默认值，即各种不同形式的零值         
 >4，设置对象头。设置新对象的hash码、GC信息、锁信息、对象所属的类元信息等,这个过程的具体设置方式取决于JVM实现    
 >5，执行init方法。初始化成员变量，执行实例化代码块，调用类的构造方法，并把堆内对象的首地址赋值给引用变量         
@@ -255,6 +384,13 @@ public class CustomClassLoader extends ClassLoader {
 #### 直接指针访问对象
 >直接指针访问：reference存储的对象地址
 ![Alt text](./pointer-visite-object.png "直接指针访问对象")
+
+
+####  类的加载顺序
+>1，父类静态域——父类静态块——子类静态域——子类静态块——父类成员变量及代码块——父类构造器——子类成员变量及代码块——子类构造器    
+
+#### 静态绑定和动态绑定
+>1， 程序在JVM运行过程中，会把类的类型信息、static属性和方法、final常量等元数据加载到方法区，这些在类被加载时就已经知道，不需对象的创建就能访问的，就是静态绑定的内容；需要等对象创建出来，使用时根据堆中的实例对象的类型才进行取用的就是动态绑定的内容 
 
 ### 垃圾回收
 what：哪些内存需要回收

@@ -118,6 +118,26 @@
 
 
 
+## 并发：异步和响应式微服务，线程安全，资源共享
+>1，默认设置中，Tomcat的最大线程数是200，最大连接数是10000，最佳线程数目 = （（线程等待时间+线程CPU时间）/线程CPU时间 ）* CPU数目
+>2，并发量指的是连接数
+>3，Tomcat有两种处理连接的模式，一种是BIO，一个线程只处理一个Socket连接，另一种就是NIO，一个线程处理多个Socket连接。由于HTTP请求不会太耗时，而且多个连接一般不会同时来消息，所以一个线程处理多个连接没有太大问题
+>4，CPU密集型：操作内存处理的业务，一般线程数设置为：CPU核数 + 1 或者 CPU核数*2。核数为4的话，一般设置 5 或 8
+>5，IO密集型：文件操作，网络操作，数据库操作，一般线程设置为：cpu核数 / (1-0.9)，核数为4的话，一般设置 40
+
+## tomcat
+
+![Alt text](./tomcat_struct.png "tomcat 组件结构（Engine：Catalina引擎）")
+
+## java语法糖，了解语言外衣之后的真相（反编译）
+
+* [不了解这12个语法糖，别说你会Java](https://mp.weixin.qq.com/s?__biz=MzI1NDQ3MjQxNA==&mid=2247489107&idx=1&sn=d0a60ad989170900e4ba802d522a8e22&chksm=e9c5efe2deb266f441851120cb2476b8246fabfc4596769cd4e6852ea3fee99d813b17c5cd4a&scene=21#wechat_redirect)
 
 
 
+### 微服务与DDD(领域驱动设计，domain drive design)
+>**目前微服务的划分方法里全球共识的就是DDD**，但 DDD 的核心思想并不仅仅局限于微服务本身，因为微服务是一种架构风格，而 DDD 是一种思想。**微服务定义的九大核心特质**，跟 DDD 的原则是完全一致的，这在某种程度上也是业界愿意在微服务上下文中采用 DDD 方法和实践的原因
+
+
+### 零拷贝
+*[零拷贝](https://mp.weixin.qq.com/s?__biz=MzI1NDQ3MjQxNA==&mid=2247488928&idx=1&sn=6820fbaae5d8d0ca7f077e726815cd9f&chksm=e9c5ec11deb26507242a9ea3197d65454905c2d36e4a469497d9736f41a84ab8a31b198d921d&scene=21#wechat_redirect)

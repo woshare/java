@@ -247,8 +247,35 @@ Spring的缓存抽象在很大程度上是围绕切面构建的。在Spring中�
 ### 事务
 >1，Transactional 注解只能应用到 public 方法才有效     
 >2，在默认的代理模式下，只有目标方法由外部调用，才能被 Spring 的事务拦截器拦截。在同一个类中的两个方法直接调用，是不会被 Spring 的事务拦截器拦截
->3，可以使用 AspectJ 取代 Spring AOP 代理       
+>3，可以使用 AspectJ 取代 Spring AOP 代理      
+>4，rollbackFor 默认是RuntimeException, unchecked类型的，比如空指针； 对于 Checked Exception如(IOException, TimeoutException)不生效。想要生效， 该参数得设置为 Exception.class 
+>5，@EnableTransactionManagement 开启事务
+>6，自调用无效。如果一个类中自身方法的调用，我们称之为自调用。如一个业务实现类中有methodA方法调用了自身类的methodB方法就是自调用。需要有代理对象的调用才会有效。解决方案：定义两个service或者例7
+>7，在同一个Service中，methodA不直接调用methodB，而是先从Spring IOC容器中重新获取代理对象`OrderServiceImpl·,获取到后再去调用methodB，如下：
+```
+public class OrderServiceImpl implements OrderService,ApplicationContextAware {
+    private ApplicationContext applicationContext = null;
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    @Transactional
+    public void methodA(){
+        OrderService orderService = applicationContext.getBean(OrderService.class);//从Spring IOC容器中重新获取代理对象
+        for (int i = 0; i < 10; i++) {
+            orderService.methodB();
+        }
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRES_NEW)
+    public int methodB(){
+        ......
+    }
+
+}
+```
 
 ![Alt text](./transactional-proxy-model.png "事务代理模型")
 
@@ -409,3 +436,25 @@ public class Customer {
 }
 
 ```
+### 参数校验注解
+@Null   被注释的元素必须为 null    
+@NotNull    被注释的元素必须不为 null    
+@AssertTrue     被注释的元素必须为 true    
+@AssertFalse    被注释的元素必须为 false    
+@Min(value)     被注释的元素必须是一个数字，其值必须大于等于指定的最小值    
+@Max(value)     被注释的元素必须是一个数字，其值必须小于等于指定的最大值    
+@DecimalMin(value)  被注释的元素必须是一个数字，其值必须大于等于指定的最小值    
+@DecimalMax(value)  被注释的元素必须是一个数字，其值必须小于等于指定的最大值    
+@Size(max=, min=)   被注释的元素的大小必须在指定的范围内    
+@Digits (integer, fraction)     被注释的元素必须是一个数字，其值必须在可接受的范围内    
+@Past   被注释的元素必须是一个过去的日期    
+@Future     被注释的元素必须是一个将来的日期    
+@Pattern(regex=,flag=)  被注释的元素必须符合指定的正则表达式    
+
+
+Hibernate Validator提供的校验注解：  
+@NotBlank(message =)   验证字符串非null，且长度必须大于0    
+@Email  被注释的元素必须是电子邮箱地址    
+@Length(min=,max=)  被注释的字符串的大小必须在指定的范围内    
+@NotEmpty   被注释的字符串的必须非空    
+@Range(min=,max=,message=)  被注释的元素必须在合适的范围内
