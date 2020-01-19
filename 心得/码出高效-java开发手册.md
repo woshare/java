@@ -267,6 +267,8 @@ public class HelloWorld{
 
 #### 3.使用javah -jni java类生成扩展名为h的头文件
 >1,javah -jni -verbose -classpath . HelloWorld  得到HelloWorld.h
+>2，总结：当我们熟悉了 JNI 的 native 函数命名规则之后，就可以不用通过javah命令去生成相应 java native方法的函数原型了，只需要按照函数命名规则编写相应的函数原型和实现即可
+
 
 #### 4使用C/C++实现本地方法，创建HelloWorldImpl.cpp
 ```
