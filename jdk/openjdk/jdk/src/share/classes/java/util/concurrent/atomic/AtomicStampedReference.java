@@ -122,10 +122,10 @@ public class AtomicStampedReference<V> {
      * @param newStamp the new value for the stamp
      * @return {@code true} if successful
      */
-    public boolean weakCompareAndSet(V   expectedReference,
-                                     V   newReference,
-                                     int expectedStamp,
-                                     int newStamp) {
+    public boolean weakCompareAndSet(V   expectedReference,//预期引用
+                                     V   newReference,//更新后的引用
+                                     int expectedStamp,//预期标志
+                                     int newStamp) {//更新后的标志
         return compareAndSet(expectedReference, newReference,
                              expectedStamp, newStamp);
     }
@@ -142,10 +142,10 @@ public class AtomicStampedReference<V> {
      * @param newStamp the new value for the stamp
      * @return {@code true} if successful
      */
-    public boolean compareAndSet(V   expectedReference,
-                                 V   newReference,
-                                 int expectedStamp,
-                                 int newStamp) {
+    public boolean compareAndSet(V   expectedReference,//预期引用
+                                 V   newReference,//更新后的引用
+                                 int expectedStamp,//预期标志
+                                 int newStamp) {//更新后的标志
         Pair<V> current = pair;
         return
             expectedReference == current.reference &&

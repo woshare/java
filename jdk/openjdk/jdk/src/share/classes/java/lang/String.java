@@ -1456,7 +1456,7 @@ public final class String
             char val[] = value;
 
             for (int i = 0; i < value.length; i++) {
-                h = 31 * h + val[i];
+                h = 31 * h + val[i]; //减少hash碰撞，常见的散列算法大都采用了31作为乘法因子
             }
             hash = h;
         }

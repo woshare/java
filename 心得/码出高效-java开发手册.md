@@ -282,7 +282,11 @@ JNIEXPORT void JNICALL Java_HelloWorld_sayHelloWorld(JNIEnv *, jobject){
 }
 ```
 #### 5 将本地方法编写的文件生成动态链接库
->1，gcc  -I/$JAVA_HOME/include -I/$JAVA_HOME/include/darwin/ -I/$JAVA_HOME/include/linux/ -fPIC -shared HelloWorldImpl.cpp -o libHelloWorldImpl.so  
+
+>1，编译
+```
+gcc  -I/$JAVA_HOME/include -I/$JAVA_HOME/include/darwin/ -I/$JAVA_HOME/include/linux/ -fPIC -shared HelloWorldImpl.cpp -o libHelloWorldImpl.so  
+```
 >2，这个动态so文件名和HelloWorld.java 中System.loadLibrary 一致，按照linux中的约定lib会被忽略
 
 #### 6执行HelloWorld

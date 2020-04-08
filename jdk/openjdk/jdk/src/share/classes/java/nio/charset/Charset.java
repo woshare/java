@@ -324,7 +324,8 @@ public abstract class Charset
     //
     private static volatile Object[] cache1 = null; // "Level 1" cache
     private static volatile Object[] cache2 = null; // "Level 2" cache
-
+    //volatile修饰的变量不允许线程内部缓存和重排序，即直接修改内存
+    //每个线程都有自己的私有工作内存
     private static void cache(String charsetName, Charset cs) {
         cache2 = cache1;
         cache1 = new Object[] { charsetName, cs };

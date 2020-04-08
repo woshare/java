@@ -70,7 +70,7 @@ public final class Long extends Number implements Comparable<Long> {
      *
      * @since   JDK1.1
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")//告诉编译器忽略指定的警告，不用在编译完成后出现警告信息
     public static final Class<Long>     TYPE = (Class<Long>) Class.getPrimitiveClass("long");
 
     /**

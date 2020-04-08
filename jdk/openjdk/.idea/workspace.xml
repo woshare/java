@@ -1,8 +1,276 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dda079ac-cbb7-46d8-a597-3da19a3d0ec2" name="Default Changelist" comment="" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <list default="true" id="dda079ac-cbb7-46d8-a597-3da19a3d0ec2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/A.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Agent.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/AllPerm.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Deadlock.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/JarFile.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/JarInputStream.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/OldSocketImpl.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/PluggableLocale.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/SecretKeyFactory.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/UnicodeTest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/ZipFile.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/awtres.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/b.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/b1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/badattr.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/exp.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/extention.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/golden.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/input.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/jars.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/jarsigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/javax_mail.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/loader.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/native.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/rbcontrolprovider.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/resource.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/test.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/test1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/test2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/test3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/test4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/test5.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/test6.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/testclasses.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/zip.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/jdk1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/make/data/data.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/make/non-build-utils/non-build-utils.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/make/non-build-utils/reorder/reorder.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/make/non-build-utils/sharing/sharing.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/make/src/make.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/aix/aix.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/macosx/macosx.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/macosx/native/jobjc/src/core/core.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/macosx/native/jobjc/src/generator/generator.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/macosx/native/jobjc/src/runtime-additions/runtime-additions.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/macosx/native/jobjc/src/tests/tests.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/demo/applets/applets.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/demo/java2d/java2d.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/demo/jfc/jfc.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/demo/jvmti/jvmti.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/demo/management/management2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/demo/nio/nio2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/demo/scripting/scripting1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/doc/doc.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/lib/lib1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/annotations/DependencyChecker/PluginChecker/PluginChecker.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/annotations/DependencyChecker/Plugins/Plugins.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/annotations/Validator/Validator.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/forkjoin/forkjoin.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/jmx/jmx1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/lambda/BulkDataOperations/BulkDataOperations.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/lambda/lambda.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/nio/nio4.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/scripting/scripting.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/try-with-resources/try-with-resources.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/sample/vm/vm1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/share/share.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/solaris/demo/demo1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/solaris/solaris.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/src/windows/windows.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/apple/apple.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/oracle/oracle.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/awt/awt.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/corba/corba.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/corba/se/se.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/crypto/provider/Cipher/Cipher.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/crypto/provider/provider1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/java/sun2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/jmx/jmx.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/jndi/jndi.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/jndi/rmi/rmi1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/management/management.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/net/net1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/nio/nio1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/org/org.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/security/security.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/sun1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/com/sun/tools/tools1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/demo/demo.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Choice/Choice.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Color/Color.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Component/Component.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Container/Container.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Cursor/Cursor.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/DataFlavor/DataFlavor1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Desktop/Desktop.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Dialog/Dialog.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/EventDispatchThread/EventDispatchThread.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/EventQueue/EventQueue.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/FileDialog/FileDialog.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Focus/Focus.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Frame/Frame.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/FullScreen/FullScreen.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/GraphicsConfiguration/GraphicsConfiguration.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/GridBagLayout/GridBagLayout.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/GridLayout/GridLayout.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/InputMethods/InputMethods.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/KeyboardFocusmanager/KeyboardFocusmanager.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/List/List.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Menu/Menu.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/MenuBar/MenuBar.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Modal/Modal.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Modal/WsDisabledStyle/WsDisabledStyle.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Mouse/Mouse.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/MouseAdapter/MouseAdapter.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Multiscreen/Multiscreen.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Robot/Robot.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/ScrollPane/ScrollPane.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/TextArea/TextArea.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/TextField/TextField.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Toolkit/AutoShutdown/AutoShutdown.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Toolkit/Headless/Headless.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Toolkit/Toolkit.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/TrayIcon/TrayIcon.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/WMSpecificTests/WMSpecificTests.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/Window/Window.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/appletviewer/appletviewer.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/awt2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/datatransfer/DataFlavor/DataFlavor.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/datatransfer/datatransfer.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/dnd/dnd1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/event/HierarchyEvent/HierarchyEvent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/event/InputEvent/InputEvent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/event/KeyEvent/KeyEvent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/event/MouseEvent/MouseEvent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/event/MouseWheelEvent/MouseWheelEvent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/event/OtherEvents/OtherEvents.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/event/TextEvent/TextEvent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/event/event.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/font/font.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/geom/geom.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/grab/grab.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/keyboard/keyboard.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/print/print.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/awt/xembed/xembed.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/beans/beans.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/math/math.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/nio/charset/charset.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/nio/nio3.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/MarshalledObject/MarshalledObject.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/RMISecurityManager/RMISecurityManager.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/RemoteException/RemoteException.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/activation/Activatable/Activatable.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/activation/ActivateFailedException/ActivateFailedException.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/activation/ActivationGroup/ActivationGroup.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/activation/ActivationGroupDesc/ActivationGroupDesc.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/activation/ActivationSystem/ActivationSystem.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/activation/activation.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/dgc/dgc.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/registry/registry.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/reliability/reliability.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/rmi.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/server/ObjID/ObjID.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/server/RMIClassLoader/RMIClassLoader.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/server/RMISocketFactory/RMISocketFactory.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/server/RemoteObject/RemoteObject.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/server/UnicastRemoteObject/UnicastRemoteObject.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/server/Unreferenced/Unreferenced.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/server/server.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/rmi/transport/transport1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/security/Policy/Policy.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/security/security1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/test.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/text/Format/Format.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/text/text.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/util/concurrent/concurrent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/util/concurrent/locks/locks.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/util/function/function.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/util/spi/spi1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/java/util/util1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/accessibility/accessibility.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/crypto/crypto1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/crypto/spec/spec.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/javax1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/management/management1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/management/remote/remote.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/naming/ldap/ldap.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/naming/naming.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/naming/spi/spi.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/net/net2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/rmi/rmi2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/security/auth/auth.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/security/auth/login/login.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/security/auth/x500/x500.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/security/sasl/sasl.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/sound/midi/Gervill/Gervill.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/sound/midi/midi.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/sound/sampled/sampled.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/sql/sql.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/bind/marshal/marshal.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/bind/xjc/xjc.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/crypto/crypto.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/jaxp/XPath/XPath.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/jaxp/common/common.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/jaxp/jaxp.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/jaxp/parsers/parsers.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/jaxp/transform/transform.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/jaxp/validation/validation.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/javax/xml/ws/ws.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/jdk/jdk.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/jdk/net/net.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/lib/lib.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sample/sample.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/awt/AppContext/AppContext.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/awt/awt1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/awt/dnd/dnd.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/jvmstat/jvmstat.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/jvmstat/monitor/monitor.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/jvmstat/perfdata/perfdata.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/nio/nio.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/reflect/reflect.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/rmi/log/log.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/rmi/rmic/newrmic/newrmic.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/rmi/rmic/rmic.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/rmi/runtime/runtime.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/rmi/server/server1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/rmi/transport/transport.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/acl/acl.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/pkcs/pkcs.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/provider/provider.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/security2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/com/sun/net/ssl/internal/ssl/ssl1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/com/sun/net/ssl/internal/www/www.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/com/sun/net/ssl/ssl.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/javax/javax.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/sanity/sanity.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/ssl2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/sun/net/www/http/http.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/sun/net/www/protocol/protocol.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/ssl/sun/net/www/www1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/tools/tools2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/util/util.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/security/x509/x509.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/sun.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/text/text1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/tools/tools3.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/util/locale/locale.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/util/resources/resources.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/sun/util/util2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/tools/tools.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdk/test/vm/vm.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../java基础/java编程思想.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/java编程思想.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotspot/src/share/vm/classfile/javaClasses.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/hotspot/src/share/vm/classfile/javaClasses.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotspot/src/share/vm/prims/unsafe.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/hotspot/src/share/vm/prims/unsafe.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/Boolean.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/Boolean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/Character.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/Character.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/Long.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/Long.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/Object.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/String.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/lang/String.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/nio/charset/Charset.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/nio/charset/Charset.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/atomic/AtomicStampedReference.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/atomic/AtomicStampedReference.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../心得/码出高效-java开发手册.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../心得/码出高效-java开发手册.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,227 +280,28 @@
     <option name="testRunner" value="GRADLE" />
     <option name="delegatedBuild" value="true" />
   </component>
-  <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/jdk/make/src/classes/build/tools/classfile/RemoveMethods.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2003">
-              <folding>
-                <element signature="e#0#4446#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/sun/nio/cs/UTF_8.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="649" column="37" selection-start-line="649" selection-start-column="37" selection-end-line="649" selection-end-column="37" />
-              <folding>
-                <element signature="e#0#31712#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/lang/Object.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5364">
-              <caret line="237" lean-forward="true" selection-start-line="237" selection-end-line="237" />
-              <folding>
-                <element signature="e#0#26865#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/lang/String.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-594">
-              <caret line="419" column="32" lean-forward="true" selection-start-line="419" selection-start-column="32" selection-end-line="419" selection-end-column="32" />
-              <folding>
-                <element signature="e#0#124972#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/lang/Enum.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="562">
-              <caret line="61" column="30" lean-forward="true" selection-start-line="61" selection-start-column="30" selection-end-line="61" selection-end-column="30" />
-              <folding>
-                <element signature="e#0#9736#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hotspot/src/cpu/x86/vm/assembler_x86.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="45" column="14" lean-forward="true" selection-start-line="45" selection-start-column="14" selection-end-line="45" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/javax/print/attribute/standard/JobStateReason.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="441" column="23" selection-start-line="441" selection-start-column="23" selection-end-line="441" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/sun/tools/util/ModifierFilter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="41" column="14" selection-start-line="41" selection-start-column="14" selection-end-line="41" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hotspot/src/cpu/x86/vm/vmStructs_x86.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-588" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/jdk/src/share/demo/jvmti/hprof/hprof_util.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="312">
-              <caret line="629" selection-start-line="629" selection-end-line="629" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>public class Object</find>
-      <find>registerNatives</find>
-      <find>java.lang</find>
-      <find>getClass</find>
-    </findStrings>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1618" />
-    <option name="y" value="128" />
-    <option name="width" value="1678" />
-    <option name="height" value="1035" />
-  </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-              <item name="jdk" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-              <item name="jdk" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-              <item name="jdk" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="share" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-              <item name="jdk" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="share" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-              <item name="jdk" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="share" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-              <item name="jdk" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="share" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="lang" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-              <item name="jdk" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="share" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="sun" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="openjdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="openjdk" type="462c0819:PsiDirectoryNode" />
-              <item name="jdk" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="share" type="462c0819:PsiDirectoryNode" />
-              <item name="javavm" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="PackagesPane" />
-    </panes>
+  <component name="ProjectId" id="1Zsgh9ahTOksrF6LAesf5QWgIpJ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/jdk" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.customizations" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -245,204 +314,67 @@
       <option name="presentableId" value="Default" />
       <updated>1579088045654</updated>
       <workItem from="1579088048726" duration="9240000" />
+      <workItem from="1585633333303" duration="10337000" />
+      <workItem from="1585726257202" duration="609000" />
+      <workItem from="1585793574047" duration="2805000" />
+      <workItem from="1585897159558" duration="7804000" />
+      <workItem from="1586230627759" duration="2792000" />
+      <workItem from="1586311202699" duration="11001000" />
     </task>
     <servers />
-  </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9240000" />
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="1912" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="true" />
-    <layout>
-      <window_info id="Designer" />
-      <window_info id="Image Layers" />
-      <window_info id="UI Designer" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info id="Capture Tool" />
-      <window_info id="Learn" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="Database Changes" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Maven" />
-      <window_info anchor="right" id="RestServices" />
-      <window_info anchor="right" id="Palette" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="right" id="Mybatis datasource" side_tool="true" />
-      <window_info anchor="right" id="Database" />
-      <window_info anchor="right" id="Palette&#9;" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/hotspot/src/cpu/ppc/vm/assembler_ppc.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1134" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hotspot/test/gc/6581734/Test6581734.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="139" column="32" lean-forward="true" selection-start-line="139" selection-start-column="32" selection-end-line="139" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#5307#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/make/data/characterdata/CharacterData0E.java.template">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1350">
-          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/make/data/classlist/classlist.linux">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3240" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/make/src/native/add_gnu_debuglink/add_gnu_debuglink.c">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/make/src/native/fix_empty_sec_hdr_flags/fix_empty_sec_hdr_flags.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4111" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/make/scripts/addNotices.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="30" column="15" selection-start-line="30" selection-end-line="30" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/make/scripts/localelist.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-972" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/.jcheck/conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/make/src/classes/build/tools/classfile/RemoveMethods.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2003">
-          <folding>
-            <element signature="e#0#4446#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/sun/nio/cs/UTF_8.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="649" column="37" selection-start-line="649" selection-start-column="37" selection-end-line="649" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#31712#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hotspot/src/cpu/x86/vm/vmStructs_x86.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-588" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/demo/jvmti/hprof/hprof_util.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="629" selection-start-line="629" selection-end-line="629" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hotspot/src/cpu/x86/vm/assembler_x86.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="45" column="14" lean-forward="true" selection-start-line="45" selection-start-column="14" selection-end-line="45" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/javax/print/attribute/standard/JobStateReason.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="441" column="23" selection-start-line="441" selection-start-column="23" selection-end-line="441" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/sun/tools/util/ModifierFilter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="41" column="14" selection-start-line="41" selection-start-column="14" selection-end-line="41" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/lang/Object.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5364">
-          <caret line="237" lean-forward="true" selection-start-line="237" selection-end-line="237" />
-          <folding>
-            <element signature="e#0#26865#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/lang/String.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-594">
-          <caret line="419" column="32" lean-forward="true" selection-start-line="419" selection-start-column="32" selection-end-line="419" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#124972#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/lang/Enum.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="562">
-          <caret line="61" column="30" lean-forward="true" selection-start-line="61" selection-start-column="30" selection-end-line="61" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#9736#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="masterDetails">
-    <states>
-      <state key="ProjectJDKs.UI">
-        <settings>
-          <last-edited>12</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-    </states>
+  <component name="WindowStateProjectService">
+    <state x="233" y="0" key="#Project_Structure" timestamp="1586314412156">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="233" y="0" key="#Project_Structure/0.0.1280.680@0.0.1280.680" timestamp="1586314412156" />
+    <state x="468" y="56" key="#com.intellij.ide.ui.customization.CustomizableActionsPanel.FindAvailableActionsDialog" timestamp="1586312706520">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="468" y="56" key="#com.intellij.ide.ui.customization.CustomizableActionsPanel.FindAvailableActionsDialog/0.0.1280.680@0.0.1280.680" timestamp="1586312706520" />
+    <state x="488" y="230" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1585633582068">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="488" y="230" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1280.680@0.0.1280.680" timestamp="1585633582068" />
+    <state x="442" y="31" key="FileChooserDialogImpl" timestamp="1586313673363">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="442" y="31" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1586313673363" />
+    <state x="308" y="38" width="730" height="603" key="NewModule_or_Project.wizard" timestamp="1586313752247">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="308" y="38" width="730" height="603" key="NewModule_or_Project.wizard/0.0.1280.680@0.0.1280.680" timestamp="1586313752247" />
+    <state x="142" y="0" key="SettingsEditor" timestamp="1586313799832">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="142" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1586313799832" />
+    <state x="325" y="165" key="com.intellij.ide.util.TipDialog" timestamp="1586311203271">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="325" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1586311203271" />
+    <state x="195" y="76" width="891" height="604" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1586314434405">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="195" y="76" width="891" height="604" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1280.680@0.0.1280.680" timestamp="1586314434405" />
+    <state x="254" y="40" width="773" height="600" key="find.popup" timestamp="1586327388691">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="254" y="40" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1586327388691" />
   </component>
 </project>

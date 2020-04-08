@@ -1,5 +1,8 @@
 ## java编程思想
 
+### 阅读书籍
+* [Java编程思想](https://lingcoder.gitee.io/onjava8/#/sidebar)
+
 ### 思维导图
 
 ![Alt text](./thinkinjavamap.png "java编程思想-总结思维导图")

@@ -372,7 +372,7 @@ class java_lang_Thread : AllStatic {
 
   // Pointer to type-stable park handler, encoded as jlong.
   // Should be set when apparently null
-  // For details, see unsafe.cpp Unsafe_Unpark
+  // For details, see  Unsafe_Unpark
   static jlong park_event(oop java_thread);
   static bool set_park_event(oop java_thread, jlong ptr);
 

@@ -210,7 +210,7 @@ public final class Boolean implements java.io.Serializable,
      * @since 1.8
      */
     public static int hashCode(boolean value) {
-        return value ? 1231 : 1237;
+        return value ? 1231 : 1237;//1231和1237是两个比较大的素数(质数)，减少hash碰撞
     }
 
    /**

@@ -1191,14 +1191,14 @@ UNSAFE_END
 
 UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapObject(JNIEnv *env, jobject unsafe, jobject obj, jlong offset, jobject e_h, jobject x_h))
   UnsafeWrapper("Unsafe_CompareAndSwapObject");
-  oop x = JNIHandles::resolve(x_h);
-  oop e = JNIHandles::resolve(e_h);
+  oop x = JNIHandles::resolve(x_h);// 新值
+  oop e = JNIHandles::resolve(e_h);// 预期值
   oop p = JNIHandles::resolve(obj);
-  HeapWord* addr = (HeapWord *)index_oop_from_field_offset_long(p, offset);
+  HeapWord* addr = (HeapWord *)index_oop_from_field_offset_long(p, offset);// 在内存中的具体位置
   oop res = oopDesc::atomic_compare_exchange_oop(x, addr, e, true);
-  jboolean success  = (res == e);
-  if (success)
-    update_barrier_set((void*)addr, x);
+  jboolean success  = (res == e);// 如果返回的res等于e，则判定满足compare条件（说明res应该为内存中的当前值），但实际上会有ABA的问题
+  if (success)// success为true时，说明此时已经交换成功（调用的是最底层的cmpxchg指令）
+    update_barrier_set((void*)addr, x);// 每次Reference类型数据写操作时，都会产生一个Write Barrier暂时中断操作，配合垃圾收集器
   return success;
 UNSAFE_END
 

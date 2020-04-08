@@ -35,7 +35,7 @@ package java.lang;
  * @since   JDK1.0
  */
 public class Object {
-
+    //registerNatives则是对本地方法注册，装载本地库。在Object初始化时执行。
     private static native void registerNatives();
     static {
         registerNatives();
@@ -552,5 +552,5 @@ public class Object {
      * @see java.lang.ref.PhantomReference
      * @jls 12.6 Finalization of Class Instances
      */
-    protected void finalize() throws Throwable { }
+    protected void finalize() throws Throwable { }//finalize用户垃圾回收是由JVM调用
 }

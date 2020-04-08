@@ -149,7 +149,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      */
     public static final int MAX_RADIX = 36;
 
-    /**
+    /**char所能代表的最小值
      * The constant value of this field is the smallest value of type
      * {@code char}, {@code '\u005Cu0000'}.
      *
@@ -157,7 +157,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      */
     public static final char MIN_VALUE = '\u0000';
 
-    /**
+    /** char能代表的最大值
      * The constant value of this field is the largest value of type
      * {@code char}, {@code '\u005CuFFFF'}.
      *

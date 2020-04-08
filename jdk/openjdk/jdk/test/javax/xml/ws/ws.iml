@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/8033113" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/8043129" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/clientjar" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ebcdic" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/xsanymixed" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="javax.mail" level="project" />
+    <orderEntry type="library" name="golden" level="project" />
+    <orderEntry type="module" module-name="share" />
+    <orderEntry type="module" module-name="solaris" />
+    <orderEntry type="module" module-name="windows" />
+    <orderEntry type="module" module-name="macosx" />
+  </component>
+</module>
