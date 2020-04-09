@@ -1005,7 +1005,20 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     public V put(K key, V value) {
         return putVal(key, value, false);
     }
-
+    /**
+     * putVal方法可以分为以下几步：
+     * 1、检查key/value是否为空，如果为空，则抛异常，否则进行2
+     * 2、进入for死循环，进行3
+     * 3、检查table是否初始化了，如果没有，则调用initTable()进行初始化然后进行 2，否则进行4
+     * 4、根据key的hash值计算出其应该在table中储存的位置i，取出table[i]的节点用f表示。
+     * 根据f的不同有如下三种情况：
+     * 1）如果table[i]==null(即该位置的节点为空，没有发生碰撞)，则利用CAS操作直接存储在该位置，如果CAS操作成功则退出死循环。
+     * 2）如果table[i]!=null(即该位置已经有其它节点，发生碰撞)，碰撞处理也有两种情况
+     * 2.1）检查table[i]的节点的hash是否等于MOVED，如果等于，则检测到正在扩容，则帮助其扩容
+     * 2.2）说明table[i]的节点的hash值不等于MOVED，如果table[i]为链表节点，则将此节点插入链表中即可
+     * 如果table[i]为树节点，则将此节点插入树中即可。插入成功后，进行 5
+     * 5、如果table[i]的节点是链表节点，则检查table的第i个位置的链表是否需要转化为树，如果需要则调用treeifyBin函数进行转化
+     */
     /** Implementation for put and putIfAbsent */
     final V putVal(K key, V value, boolean onlyIfAbsent) {
         if (key == null || value == null) throw new NullPointerException();

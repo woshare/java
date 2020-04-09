@@ -71,3 +71,17 @@ public class Outer implements Serializable{
   }
 }
 ```
+>实现对象克隆有两种方式：
+>1). 实现Cloneable接口并重写Object类中的clone()方法；
+>2). 实现Serializable接口，通过对象的序列化和反序列化实现克隆，可以实现真正的深度克隆
+
+### https
+>1，CA ROOT 给server生成证书（CA的私钥加密server的信息（1，公钥：Public-Key 2，签名：Signature
+3,签名算法： Signature Algorithm: sha256WithRSAEncryption4，证书颁布机构：Issuer 5，过期时间：Validity...））
+>2，client 有CA ROOT的证书公钥
+>3，client发起https请求
+>4，server回应client证书
+>5，client用CA的公钥解开server证书，拿到server的公钥
+>6，client生成随机对称秘钥，用server的公钥加密，给server
+>7，server拿到client的加密数据，用自己的私钥解开，拿到client的对称秘钥
+>8，用对称秘钥加解密传输数据

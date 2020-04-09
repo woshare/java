@@ -242,15 +242,22 @@ class Thread implements Runnable {
     }
 
     /**
+     * 最低优先级
+     */
+    /**
      * The minimum priority that a thread can have.
      */
     public final static int MIN_PRIORITY = 1;
-
+    /**
+     * 普通优先级，也是默认的
+     */
    /**
      * The default priority that is assigned to a thread.
      */
     public final static int NORM_PRIORITY = 5;
-
+    /**
+     * 最高优先级
+     */
     /**
      * The maximum priority that a thread can have.
      */
@@ -721,6 +728,8 @@ class Thread implements Runnable {
             } catch (Throwable ignore) {
                 /* do nothing. If start0 threw a Throwable then
                   it will be passed up the call stack */
+                // 这里的 catch 捕捉也是值得我们学习的，我们在工作中 catch 时也应该多用 Throwable，少用 Exception
+                // 比如对于异步线程抛出来的异常，Exception 是捕捉不住的，Throwable 却可以
             }
         }
     }
@@ -908,14 +917,17 @@ class Thread implements Runnable {
      * @revised 6.0
      * @spec JSR-51
      */
+    /**
+     * 中断线程（只是给线程预设一个标记，不是立即让线程停下来）
+     */
     public void interrupt() {
-        if (this != Thread.currentThread())
+        if (this != Thread.currentThread()) // 如果由别的线程对当前线程发起中断
             checkAccess();
 
         synchronized (blockerLock) {
             Interruptible b = blocker;
-            if (b != null) {
-                interrupt0();           // Just to set the interrupt flag
+            if (b != null) {// 如果存在线程中断回调标记
+                interrupt0();   // 设置中断标记        // Just to set the interrupt flag
                 b.interrupt(this);
                 return;
             }
@@ -1233,6 +1245,8 @@ class Thread implements Runnable {
      */
     public final synchronized void join(long millis)
     throws InterruptedException {
+        //使该方法的调用者所在的线程进入 WAITING 或 TIMED_WAITING 状态，
+        // 直到当前线程死亡，或者等待超时之后，再去执行上述调用者线程
         long base = System.currentTimeMillis();
         long now = 0;
 

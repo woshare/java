@@ -48,6 +48,11 @@
 >1，volatile修饰的变量不允许线程内部缓存和重排序，即直接修改内存
 >2，可见性，是指线程之间的可见性，一个线程修改的状态对另一个线程是可见的
 >3，原子性：对任意单个volatile变量的读/写具有原子性，但类似于volatile++这种复合操作不具有原子性
+>4，AtomicInteger.java里面封装的就是volatile类型的:private volatile int value
+>5，当写一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量值刷新到主内存
+>6，当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效。线程接下来将从主内存中读取共享变量,并更新本地内存的值.
+
+![Alt text](./volatile-mem.png "JMM简要内存数据传递")
 
 ### 原子性：循环CAS和锁机制
 >1，使用循环CAS实现原子操作：JVM中的CAS操作利用处理器提供的CMPXCHG指令实现。自旋CAS实现的基本思路就是循环进行CAS操作直到成功为止
@@ -57,10 +62,12 @@
 
 * [原子操作原理-重要-讲到硬件和汇编指令](https://blog.csdn.net/a934270082/article/details/51133253)
 >1，总线锁：LOCK#信号，使只有一个处理器占用贡献内存
->2，缓存锁：
+>2，缓存行锁：如果缓存在处理器缓存行中内存区域在LOCK操作期间被锁定，当它执行锁操作回写内存时，处理器不在总线上声言LOCK＃信号，而是修改内部的内存地址，并允许它的缓存一致性机制来保证操作的原子性，因为缓存一致性机制会阻止同时修改被两个以上处理器缓存的内存区域数据，当其他处理器回写已被锁定的缓存行的数据时会起缓存行无效，比如，当CPU1修改缓存行中的i时使用缓存锁定，那么CPU2就不能同时缓存了i的缓存行。
+
+* [CompareAndSwapObject源码分析](https://blog.csdn.net/qqqqq1993qqqqq/article/details/75211993)
 
 ```openjdk/hotspot/src/share/vm/prims/unsafe.cpp
-大致的逻辑：一个旧值，一个新值，一个旧值的引用，先判断一下旧值和旧值应用指向的地方的值是否相等，如果相等，说明可以重新设置这个值为新值，这里就会有ABA的可能（版本号解决）。。。
+CAS大致的逻辑：一个旧值，一个新值，一个旧值的引用，先判断一下旧值和旧值应用指向的地方的值是否相等，如果相等，说明可以重新设置这个值为新值，这里就会有ABA的可能（版本号解决）。。。
 问题1:如何保证这个逻辑步骤是原子的
 答：根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀
 
@@ -77,22 +84,41 @@ UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapObject(JNIEnv *env, jobject unsafe, 
   return success;
 UNSAFE_END
 
-1，如何，或者为什么要通过CAS来实现原子性，怎么理解
+1，如何，或者为什么要通过CAS来实现原子性，怎么理解？JVM中的CAS操作利用处理器提供的CMPXCHG指令实现，而程序根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀，用了总线锁或者缓存锁，达到原子性的目标
 2，什么地方发生了自旋CAS
-3，当if success=false，怎么办，会发生什么
+3，当if success=false，怎么办，会发生什么?自旋CAS,直到为true
 ```
 ``` 自旋CAS举例：
-openjdk/jdk/src/classes/java/util/concurrent/atomic/AtomicInteger.java
+1，openjdk/jdk/src/classes/java/util/concurrent/atomic/AtomicInteger.java
  public final int incrementAndGet() {
         return unsafe.getAndAddInt(this, valueOffset, 1) + 1;
     }
-openjdk/jdk/src/classes/sun/misc/unsafe.java
-public final int getAndAddInt(Object var1, long var2, int var4) {
-        int var5;
-        do {
-            var5 = this.getIntVolatile(var1, var2);
-        } while(!this.compareAndSwapInt(var1, var2, var5, var5 + var4));//自旋CAS
 
-        return var5;
+2，openjdk/jdk/src/classes/sun/misc/unsafe.java
+ public final int getAndAddInt(Object o, long offset, int delta) {
+        int v;
+        do {
+            v = getIntVolatile(o, offset);
+        } while (!compareAndSwapInt(o, offset, v, v + delta));//自旋CAS
+        return v;
     }
 ```
+
+### hashmap & concurrenthashmap（并发，多线程安全）
+>1，注意点1：在自定义数据类型中，需要override覆盖equal和hashcode方法
+>2，初始是16个node节点（桶）数组，默认负载因子0.75
+>3，当node节点下，拉链元素超过默认的8个且当hash表不断扩容，桶（node）的个数超过64，则链表转为红黑树，当红黑树中节点数小于6个则转为链表
+>4，jdk1.8版本的hashmap和concurrenthashmap的结构是差不多的，如图。
+>5，concurrenthashmap中的val和next是volatile的，并且用上了CAS
+![Alt text](./hashmap-struct-jdk1.8.jpg "hashmap-jdk1.8-结构（链式+红黑树）")
+
+### 静态内部类和普通内部类
+>1，内部静态类不需要有指向外部类的引用。但非静态内部类需要持有对外部类的引用
+>2，非静态内部类能够访问外部类的静态和非静态成员。静态类不能访问外部类的非静态成员。他只能访问外部类的静态成员
+>3，一个非静态内部类不能脱离外部类实体被创建，一个非静态内部类可以访问外部类的数据和方法，因为他就在外部类里面
+
+## 异常处理
+
+>1，在工作中 catch 时也应该多用 Throwable，少用 Exception，比如对于异步线程抛出来的异常，Exception 是捕捉不住的，Throwable 却可以
+
+### @FunctionalInterface注解 函数式接口&Lambda

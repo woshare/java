@@ -244,7 +244,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     /**
      * The load factor used when none specified in constructor.
      */
-    static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    static final float DEFAULT_LOAD_FACTOR = 0.75f;//默认装填因子0.75，如果当前键值对个数 >= HashMap最大容量*装填因子，进行rehash操作
 
     /**
      * The bin count threshold for using a tree rather than list for a
@@ -254,14 +254,14 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * tree removal about conversion back to plain bins upon
      * shrinkage.
      */
-    static final int TREEIFY_THRESHOLD = 8;
+    static final int TREEIFY_THRESHOLD = 8;//JDK1.8 新加，Entry链表最大长度，当桶中节点数目大于该长度时，将链表转成红黑树存储
 
-    /**
+    /*
      * The bin count threshold for untreeifying a (split) bin during a
      * resize operation. Should be less than TREEIFY_THRESHOLD, and at
      * most 6 to mesh with shrinkage detection under removal.
      */
-    static final int UNTREEIFY_THRESHOLD = 6;
+    static final int UNTREEIFY_THRESHOLD = 6;//JDK1.8 新加，当桶中节点数小于该长度，将红黑树转为链表存储
 
     /**
      * The smallest table capacity for which bins may be treeified.
@@ -271,6 +271,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     static final int MIN_TREEIFY_CAPACITY = 64;
 
+    //JDK1.6用Entry描述键值对，JDK1.8中用Node代替Entry
     /**
      * Basic hash bin node, used for most entries.  (See below for
      * TreeNode subclass, and in LinkedHashMap for its Entry subclass.)
@@ -596,6 +597,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
+     * 将指定参数key和指定参数value插入map中，如果key已经存在，那就替换key对应的value
+     * put(K key, V value)可以分为三个步骤：
+     * 1.通过hash(Object key)方法计算key的哈希值。
+     * 2.通过putVal(hash(key), key, value, false, true)方法实现功能。
+     * 3.返回putVal方法返回的结果。
+     */
+    /**
      * Associates the specified value with the specified key in this map.
      * If the map previously contained a mapping for the key, the old
      * value is replaced.
@@ -612,6 +620,21 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
+     * Map.put和其他相关方法的实现需要的方法
+     * putVal方法可以分为下面的几个步骤:
+     * 1.如果哈希表为空，调用resize()创建一个哈希表。
+     * 2.如果指定参数hash在表中没有对应的桶，即为没有碰撞，直接将键值对插入到哈希表中即可。
+     * 3.如果有碰撞，遍历桶，找到key映射的节点
+     * 3.1桶中的第一个节点就匹配了，将桶中的第一个节点记录起来。
+     * 3.2如果桶中的第一个节点没有匹配，且桶中结构为红黑树，则调用红黑树对应的方法插入键值对。
+     * 3.3如果不是红黑树，那么就肯定是链表。遍历链表，如果找到了key映射的节点，就记录这个节点，退出循环。如果没有找到，在链表尾部插入节点。插入后，如果链的长度大于等于TREEIFY_THRESHOLD这个临界值，则使用treeifyBin方法把链表转为红黑树。
+     * 4.如果找到了key映射的节点，且节点不为null
+     * 4.1记录节点的vlaue。
+     * 4.2如果参数onlyIfAbsent为false，或者oldValue为null，替换value，否则不替换。
+     * 4.3返回记录下来的节点的value。
+     * 5.如果没有找到key映射的节点（2、3步中讲了，这种情况会插入到hashMap中），插入节点后size会加1，这时要检查size是否大于临界值threshold，如果大于会使用resize方法进行扩容。
+     */
+    /**
      * Implements Map.put and related methods
      *
      * @param hash hash for key
@@ -623,44 +646,61 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
-        Node<K,V>[] tab; Node<K,V> p; int n, i;
+        Node<K,V>[] tab;
+        Node<K,V> p;
+        int n, i;
+        //如果哈希表为空，调用resize()创建一个哈希表，并用变量n记录哈希表长度
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
+        /**
+         * 如果指定参数hash在表中没有对应的桶，即为没有碰撞
+         * Hash函数，(n - 1) & hash 计算key将被放置的槽位
+         * (n - 1) & hash 本质上是hash % n，位运算更快
+         */
         if ((p = tab[i = (n - 1) & hash]) == null)
-            tab[i] = newNode(hash, key, value, null);
-        else {
+            tab[i] = newNode(hash, key, value, null);//直接将键值对插入到map中即可
+        else {// 桶中已经存在元素
             Node<K,V> e; K k;
+            // 比较桶中第一个元素(数组中的结点)的hash值相等，key相等
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
-                e = p;
-            else if (p instanceof TreeNode)
+                e = p;// 将第一个元素赋值给e，用e来记录
+            else if (p instanceof TreeNode)// 当前桶中无该键值对，且桶是红黑树结构，按照红黑树结构插入
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
-            else {
+            else {// 当前桶中无该键值对，且桶是链表结构，按照链表结构插入到尾部
                 for (int binCount = 0; ; ++binCount) {
+                    // 遍历到链表尾部
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
+                        // 检查链表长度是否达到阈值，达到将该槽位节点组织形式转为红黑树
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
                     }
+                    // 链表节点的<key, value>与put操作<key, value>相同时，不做重复操作，跳出循环
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         break;
                     p = e;
                 }
             }
+            // 找到或新建一个key和hashCode与插入元素相等的键值对，进行put操作
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
+                /**
+                 * onlyIfAbsent为false或旧值为null时，允许替换旧值
+                 * 否则无需替换
+                 */
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
-                afterNodeAccess(e);
-                return oldValue;
+                afterNodeAccess(e); // 访问后回调
+                return oldValue;// 返回旧值
             }
         }
-        ++modCount;
-        if (++size > threshold)
+        ++modCount;// 更新结构化修改信息
+        if (++size > threshold)// 键值对数目超过阈值时，进行rehash
             resize();
-        afterNodeInsertion(evict);
+        afterNodeInsertion(evict);// 插入后回调
         return null;
     }
 
@@ -748,18 +788,22 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
+     * 将链表转化为红黑树
+     */
+    /**
      * Replaces all linked nodes in bin at index for given hash unless
      * table is too small, in which case resizes instead.
      */
     final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n, index; Node<K,V> e;
+        //如果桶数组table为空，或者桶数组table的长度小于MIN_TREEIFY_CAPACITY 64，不符合转化为红黑树的条件
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
             resize();
-        else if ((e = tab[index = (n - 1) & hash]) != null) {
-            TreeNode<K,V> hd = null, tl = null;
-            do {
-                TreeNode<K,V> p = replacementTreeNode(e, null);
-                if (tl == null)
+        else if ((e = tab[index = (n - 1) & hash]) != null) {//如果符合转化为红黑树的条件，而且hash对应的桶不为null
+            TreeNode<K,V> hd = null, tl = null;// 红黑树的头、尾节点
+            do {//遍历链表
+                TreeNode<K,V> p = replacementTreeNode(e, null);//替换链表node为树node，建立双向链表
+                if (tl == null)// 确定树头节点
                     hd = p;
                 else {
                     p.prev = tl;
@@ -767,7 +811,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 }
                 tl = p;
             } while ((e = e.next) != null);
-            if ((tab[index] = hd) != null)
+            if ((tab[index] = hd) != null)//遍历链表插入每个节点到红黑树
                 hd.treeify(tab);
         }
     }
@@ -875,7 +919,10 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     public boolean containsValue(Object value) {
         Node<K,V>[] tab; V v;
         if ((tab = table) != null && size > 0) {
+            //遍历数组table
             for (int i = 0; i < tab.length; ++i) {
+                //遍历桶中的node
+                //如何这个node下不是链表结构，而是红黑树结构呢？
                 for (Node<K,V> e = tab[i]; e != null; e = e.next) {
                     if ((v = e.value) == value ||
                         (value != null && value.equals(v)))
@@ -992,6 +1039,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * <tt>add</tt> or <tt>addAll</tt> operations.
      *
      * @return a set view of the mappings contained in this map
+     */
+    /**
+     * 返回hashMap中所有键值对的set视图
+     * 改变hashMap会影响到set，反之亦然。
+     * 如果当迭代器迭代set时，hashMap被修改(除非是迭代器自己的remove()方法)，迭代器的结果是不确定的。
+     * set支持元素的删除，通过Iterator.remove、Set.remove、removeAll、retainAll、clear操作删除hashMap中对应的键值对。
+     * 不支持add和addAll方法。
      */
     public Set<Map.Entry<K,V>> entrySet() {
         Set<Map.Entry<K,V>> es;
