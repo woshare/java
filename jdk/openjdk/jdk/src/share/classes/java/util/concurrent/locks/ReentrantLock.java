@@ -203,8 +203,9 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          * acquire on failure.
          */
         final void lock() {
-            if (compareAndSetState(0, 1))
-                setExclusiveOwnerThread(Thread.currentThread());
+            //当前无线程占用同步锁
+            if (compareAndSetState(0, 1))//期待这个state为0，cas设置为1，如果没有被占用，state应该初始就是0
+                setExclusiveOwnerThread(Thread.currentThread());//前线程为锁的持有者
             else
                 acquire(1);
         }
@@ -230,19 +231,19 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          */
         protected final boolean tryAcquire(int acquires) {
             final Thread current = Thread.currentThread();
-            int c = getState();
-            if (c == 0) {
-                if (!hasQueuedPredecessors() &&
-                    compareAndSetState(0, acquires)) {
-                    setExclusiveOwnerThread(current);
+            int c = getState();//获取状态变量
+            if (c == 0) {//表明没有线程占有该同步状态
+                if (!hasQueuedPredecessors() &&//判断该线程节点是否是队列的头结点
+                    compareAndSetState(0, acquires)) {//以原子方式设置该同步状态
+                    setExclusiveOwnerThread(current);//当前线程为锁的持有者
                     return true;
                 }
             }
-            else if (current == getExclusiveOwnerThread()) {
+            else if (current == getExclusiveOwnerThread()) {//当前线程已经拥有该同步状态
                 int nextc = c + acquires;
-                if (nextc < 0)
+                if (nextc < 0)// overflow
                     throw new Error("Maximum lock count exceeded");
-                setState(nextc);
+                setState(nextc);//重复设置状态变量（锁的可重入特性）
                 return true;
             }
             return false;
@@ -454,7 +455,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
      *         hold this lock
      */
     public void unlock() {
-        sync.release(1);
+        sync.release(1);//每次调用unlock方法，只对state变量减1操作，所以多次加锁后需要多次解锁
     }
 
     /**

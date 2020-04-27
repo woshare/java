@@ -580,8 +580,8 @@ public abstract class AbstractQueuedSynchronizer
      * @param node the node to insert
      * @return node's predecessor
      */
-    private Node enq(final Node node) {
-        for (;;) {
+    private Node enq(final Node node) {//入队
+        for (;;) {//自旋CAS设置尾节点
             Node t = tail;
             if (t == null) { // Must initialize
                 if (compareAndSetHead(new Node()))
@@ -608,12 +608,14 @@ public abstract class AbstractQueuedSynchronizer
         Node pred = tail;
         if (pred != null) {
             node.prev = pred;
+            //CAS方式设置队列的尾节点
+            //成功则设置该节点前、后向指针
             if (compareAndSetTail(pred, node)) {
                 pred.next = node;
                 return node;
             }
         }
-        enq(node);
+        enq(node);//CAS方式设置等待队列尾节点 //入队
         return node;
     }
 
@@ -855,20 +857,21 @@ public abstract class AbstractQueuedSynchronizer
      * @return {@code true} if interrupted while waiting
      */
     final boolean acquireQueued(final Node node, int arg) {
-        boolean failed = true;
+        boolean failed = true;//节点入队后，自旋尝试获取同步状态
         try {
             boolean interrupted = false;
-            for (;;) {
+            for (;;) {//自旋起点
                 final Node p = node.predecessor();
+                //新节点的前驱节点是队列的头结点且尝试获取同步状态
                 if (p == head && tryAcquire(arg)) {
-                    setHead(node);
+                    setHead(node);//成功则当前节点设置为头结点
                     p.next = null; // help GC
                     failed = false;
                     return interrupted;
                 }
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
-                    interrupted = true;
+                    interrupted = true;//当前线程休眠
             }
         } finally {
             if (failed)
@@ -1194,9 +1197,9 @@ public abstract class AbstractQueuedSynchronizer
      *        {@link #tryAcquire} but is otherwise uninterpreted and
      *        can represent anything you like.
      */
-    public final void acquire(int arg) {
+    public final void acquire(int arg) {//final不允许这个方法被子类覆盖
         if (!tryAcquire(arg) &&
-            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))//表示节点处于独占模式
             selfInterrupt();
     }
 
@@ -1261,7 +1264,7 @@ public abstract class AbstractQueuedSynchronizer
         if (tryRelease(arg)) {
             Node h = head;
             if (h != null && h.waitStatus != 0)
-                unparkSuccessor(h);
+                unparkSuccessor(h);//唤醒头结点的后继节点
             return true;
         }
         return false;

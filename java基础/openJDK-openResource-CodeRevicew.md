@@ -36,7 +36,7 @@
 ```
 
 ### 其他类如何隐性继承Object
->1，当一个类没有显式标明继承的父类时，虚拟机会为其指定一个默认的父类（一般为Object）,经过编译与反编译，可以排除不是编译器默认加上的，应该是虚拟机默认加上的
+>1，当一个类没有显式标明继承的父类时，虚拟机会为其指定一个默认的父类（一般为Object）,经过编译与反编译，可以排除不是编译器默认加上的，应该是 **虚拟机** 默认加上的
 
 ### 序列化是如何实现的，为什么implements java.io.Serializable
 
@@ -51,8 +51,14 @@
 >4，AtomicInteger.java里面封装的就是volatile类型的:private volatile int value
 >5，当写一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量值刷新到主内存
 >6，当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效。线程接下来将从主内存中读取共享变量,并更新本地内存的值.
+>7，Lock前缀指令会引起处理器缓存回写到内存
+>8，一个处理器的缓存回写到内存会导致其他处理器的缓存无效
+>9，缓存一致性协议
 
 ![Alt text](./volatile-mem.png "JMM简要内存数据传递")
+
+### 字节对齐，字节填充，优化volatile的性能
+>1，LinkedTransferQueue类的内部类PaddedAtomicReference相对于父类 AtomicReference只做了一件事情，就是将共享变量追加到64字节，因为cacheline缓存行大小64B
 
 ### 原子性：循环CAS和锁机制
 >1，使用循环CAS实现原子操作：JVM中的CAS操作利用处理器提供的CMPXCHG指令实现。自旋CAS实现的基本思路就是循环进行CAS操作直到成功为止
@@ -61,7 +67,7 @@
 >4，ABA问题：如果一个值原来是A，变成了B，又变成了A，那么使用CAS进行检查时会发现它的值没有发生变化，但是实际上却变化了。ABA问题的解决思路就是使用版本号
 
 * [原子操作原理-重要-讲到硬件和汇编指令](https://blog.csdn.net/a934270082/article/details/51133253)
->1，总线锁：LOCK#信号，使只有一个处理器占用贡献内存
+>1，总线锁：LOCK#信号，使只有一个处理器占用共享内存
 >2，缓存行锁：如果缓存在处理器缓存行中内存区域在LOCK操作期间被锁定，当它执行锁操作回写内存时，处理器不在总线上声言LOCK＃信号，而是修改内部的内存地址，并允许它的缓存一致性机制来保证操作的原子性，因为缓存一致性机制会阻止同时修改被两个以上处理器缓存的内存区域数据，当其他处理器回写已被锁定的缓存行的数据时会起缓存行无效，比如，当CPU1修改缓存行中的i时使用缓存锁定，那么CPU2就不能同时缓存了i的缓存行。
 
 * [CompareAndSwapObject源码分析](https://blog.csdn.net/qqqqq1993qqqqq/article/details/75211993)
@@ -69,7 +75,7 @@
 ```openjdk/hotspot/src/share/vm/prims/unsafe.cpp
 CAS大致的逻辑：一个旧值，一个新值，一个旧值的引用，先判断一下旧值和旧值应用指向的地方的值是否相等，如果相等，说明可以重新设置这个值为新值，这里就会有ABA的可能（版本号解决）。。。
 问题1:如何保证这个逻辑步骤是原子的
-答：根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀
+答：根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀 ，并发编程的艺术里说，是因为volatile关键字引入的lock前缀指令 
 
 UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapObject(JNIEnv *env, jobject unsafe, jobject obj, jlong offset, jobject e_h, jobject x_h))
   UnsafeWrapper("Unsafe_CompareAndSwapObject");
@@ -107,7 +113,7 @@ UNSAFE_END
 ### hashmap & concurrenthashmap（并发，多线程安全）
 >1，注意点1：在自定义数据类型中，需要override覆盖equal和hashcode方法
 >2，初始是16个node节点（桶）数组，默认负载因子0.75
->3，当node节点下，拉链元素超过默认的8个且当hash表不断扩容，桶（node）的个数超过64，则链表转为红黑树，当红黑树中节点数小于6个则转为链表
+>3，当node节点下，拉链元素超过默认的8个且当hash表不断扩容，一个桶（node）的下属元素个数超过64，则链表转为红黑树，当红黑树中节点数小于6个则转为链表
 >4，jdk1.8版本的hashmap和concurrenthashmap的结构是差不多的，如图。
 >5，concurrenthashmap中的val和next是volatile的，并且用上了CAS
 ![Alt text](./hashmap-struct-jdk1.8.jpg "hashmap-jdk1.8-结构（链式+红黑树）")
@@ -122,3 +128,55 @@ UNSAFE_END
 >1，在工作中 catch 时也应该多用 Throwable，少用 Exception，比如对于异步线程抛出来的异常，Exception 是捕捉不住的，Throwable 却可以
 
 ### @FunctionalInterface注解 函数式接口&Lambda
+>1，只能有一个抽象方法
+
+### jdk native本地方法命名规则
+>1，native中的函数命名规则Java_包名_类名_自定义函数名_签名。其中包名中的“.”，需要修改成“_”
+>2，举例：找 pack=java.lang,class=Throwable,func=getStackTraceElement,jdk源码项目中全局搜Java_java_lang_Throwable_getStackTraceElement，可以得到jdk/src/share/native/java/lang/Throwable.c 函数Java_java_lang_Throwable_getStackTraceElement
+
+* [Oracle-native命名规则](https://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/design.html )
+
+### 线程池的使用
+* [线程池源码介绍和使用](https://www.cnblogs.com/dafanjoy/p/9729358.html)
+* [线程池源码解读](https://mp.weixin.qq.com/s/4LP-kIVUGPe8H8nBB6-HQA)
+* [线程池源码解读-有图示，更详细](https://www.cnblogs.com/KingJack/p/9595621.html)
+#### 线程数的设定
+``` 
+            /**
+             * Nthreads=CPU数量
+             * Ucpu=目标CPU的使用率，0<=Ucpu<=1
+             * W/C=任务等待时间与任务计算时间的比率
+             */
+            Nthreads = Ncpu*Ucpu*(1+W/C)
+```
+#### ThreadPoolExecutor扩展
+>1、beforeExecute：线程池中任务运行前执行
+>2、afterExecute：线程池中任务运行完毕后执行
+>3、terminated：线程池退出后执行
+>4，在Worker类中，run()->runWorker()->{beforeExecute();task.run();afterExecute();},在ThreadPoolExecutor类中，这三个函数式空函数，可以拓展，以实现工作线程前后和线程终结时机的操作
+>5，execute(Runnable command)->addWorker(command, true)->{workers.add(w);final Thread t = w.thread;t.start();//这个地方执行了线程，worker->run()->runWorker()->{beforeExecute();task.run();afterExecute();}}
+>6,shutdownNow()会中断所有的存活线程，不论这些线程是否空闲，因此可能会导致任务在执行的过程中抛出异常，这点需要注意
+>7,shutdown()方法只会中断空闲线程，但是非空闲的线程不会被中断，即使该线程被阻塞，因此该方法有可能无法关闭那些一直处在等待状态的非空闲线程，这一点在使用时需要注意
+>8,threadFactory:线程工厂, 如果没有设定线程工厂，那会使用DefaultThreadFactory，在Executor.java中有实现ThreadFactory接口的 newThread 
+>9，**线程异常，会使得不能捕获从线程中逃逸（抛出）的异常，要额外使用Thread.UncaughtExceptionHandler.uncaughtException** ，不过还不太懂
+
+#### 几种常用的线程池
+>1，newScheduledThreadPool：创建一个定长的线程池，而且支持定时的以及周期性的任务执行，支持定时及周期性任务执行 
+>2，newSingleThreadExecutor：只创建唯一的工作者线程来执行任务，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序
+>3，newFixedThreadPool：指定工作线程数量的线程池。每当提交一个任务就创建一个工作线程，如果工作线程数量达到线程池初始的最大数，则将提交的任务存入到池队列中。
+>4，newCachedThreadPool：创建一个可缓存线程池，如果线程池长度超过处理需要，可灵活回收空闲线程，若无可回收，则新建线程
+
+### 锁
+>1，锁的实现，AQS（AbstractQueuedSynchronizer）类中有一个 private volatile int state，锁的获取和释放是通过修改 AQS 的 state 变量来实现的
+>2，lock()->{acquire(int arg)},acquire(int arg)在AbstractQueuedSynchronizer类中
+>3，unlock()->{release(int arg)},同上
+>4，FairSync(NonFairSync)->Sync->AbstractQueuedSynchronizer->AbstractOwnableSynchronizer->Sericalizable
+>5，公平锁会先判断当前线程是否为在锁的等待队列的头结点，由于该队列是一个FIFO队列
+>6，ReentrantLock时，默认是使用非公平锁，因为在实际情况中，公平锁往往没有非公平锁的效率高。非公平锁的吞吐量更高一些
+>7，waitStatus，该Node节点规定了6种状态
+>8，获得AQS的同步状态就代表着线程获取了锁
+>9，对于同步队列，每一个节点之间是没有感知的，每个线程在尝试获取同步状态失败后，都会走一遍独占式获取同步状态的流程，包括加入队列尾部，进入等待状态，或者被前驱唤醒等，各个队列节点的独立工作，构成了多线程争抢设置AQS同步状态的场景，获得AQS的同步状态就代表着线程获取了锁
+
+![Alt text](./lock-AbstractQueuedSynchronizer-waitStatus.png "java常用锁分类")
+* [锁的详细介绍](https://tech.meituan.com/2018/11/15/java-lock.html)
+![Alt text](./java-locks.png "java常用锁分类")

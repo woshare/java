@@ -48,7 +48,16 @@ package java.util.concurrent.atomic;
  * @param <V> The type of object referred to by this reference
  */
 public class AtomicStampedReference<V> {
-
+/**
+ * AtomicStampedReference来解决ABA问题
+ *
+ * 如果一个值原来是A，变成了B，又变成了A，
+ * 那么使用CAS进行检查时会发现它 的值没有发生变化，
+ * 但是实际上却变化了。
+ * ABA问题的解决思路就是使用版本号。
+ * 在变量前面 追加上版本号，
+ * 每次变量更新的时候把版本号加1，那么A→B→A就会变成1A→2B→3A
+ */
     private static class Pair<T> {
         final T reference;
         final int stamp;
