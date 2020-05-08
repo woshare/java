@@ -212,6 +212,16 @@ import java.util.Collection;
  * @since 1.5
  * @author Doug Lea
  */
+
+/**
+ * 1,读 写锁都可重入, 线程可同时具有读 写锁
+ * 2,线程同时获取读写锁时, 必须先获取 writeLock, 再获取 readLock (也就是锁的降级), 反过来的直接导致死锁
+ * 3,ReentrantReadWriteLock支持公平与非公平机制, 主要依据是 AQS 类中的Sync Queue 里面是否有节点 或 Sync Queue 里面的 head.next 是否是获取 writeLock 的线程节点; 公平模式就会依据获取的先后顺序在 SyncQueue 里面排队获取
+ *4,读写锁互斥
+ *5,获取 readLock 的过程中, 若 此时有线程已获取写锁 或 AQS 的 Sync Queue 里面有 获取 writeLock 的线程, 则一定会等待获取writeLock成功并释放或放弃获取 后才能获取
+ *6,获取 writeLock 时 一定是在没有线程获取 readLock 或 writeLock 时才获取成功 (PS: 一个典型的死锁场景就是 一个线程先获取readLock, 后又获取writeLock)
+ *7,锁的获取支持线程中断, 且writeLock 中支持 Condition (PS: condition 只支持排他的场景)
+ */
 public class ReentrantReadWriteLock
         implements ReadWriteLock, java.io.Serializable {
     private static final long serialVersionUID = -6992448646407690164L;
@@ -258,7 +268,18 @@ public class ReentrantReadWriteLock
          * The lower one representing the exclusive (writer) lock hold count,
          * and the upper the shared (reader) hold count.
          */
+/**
+ * ReentrantReadWriteLock 这里使用 AQS里面的 state的高低16位来记录 read /write 获取的次数(PS: writeLock 是排他的 exclusive, readLock 是共享的 shared, )
+ * 记录的操作都是通过 CAS 操作(有竞争发生)
+ *
+ *  特点:
+ *      1) 同一个线程可以拥有 writeLock 与 readLock (但必须先获取 writeLock 再获取 readLock, 反过来进行获取会导致死锁)
+ *      2) writeLock 与 readLock 是互斥的(就像 Mysql 的 X S 锁)
+ *      3) 在因 先获取 readLock 然后再进行获取 writeLock 而导致 死锁时, 本线程一直卡住在对应获取 writeLock 的代码上(因为 readLock 与 writeLock 是互斥的, 在获取 writeLock 时监测到现在有线程获取 readLock , 锁一会一直在 aqs 的 sync queue 里面进行等待), 而此时
+ *          其他的线程想获取 writeLock 也会一直 block, 而若获取 readLock 若这个线程以前获取过 readLock, 则还能继续 重入 (reentrant), 而没有获取 readLock 的线程因为 aqs syn queue 里面有获取 writeLock 的 Node 节点存在会存放在 aqs syn queue 队列里面 一直 block
+ */
 
+        /** 对 32 位的 int 进行分割 (对半 16) */
         static final int SHARED_SHIFT   = 16;
         static final int SHARED_UNIT    = (1 << SHARED_SHIFT);
         static final int MAX_COUNT      = (1 << SHARED_SHIFT) - 1;

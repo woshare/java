@@ -65,6 +65,7 @@
 >2，CAS仍然存在三大问题：1）ABA问题，2）循环时间长开销大，3）只能保证一个共享变量的原子操作
 >3，使用锁机制实现原子操作（除了偏向锁，JVM实现锁的方式都用到的循环CAS）
 >4，ABA问题：如果一个值原来是A，变成了B，又变成了A，那么使用CAS进行检查时会发现它的值没有发生变化，但是实际上却变化了。ABA问题的解决思路就是使用版本号
+>5，循环时间长开销大，JVM能支持处理器提供的pause指令
 
 * [原子操作原理-重要-讲到硬件和汇编指令](https://blog.csdn.net/a934270082/article/details/51133253)
 >1，总线锁：LOCK#信号，使只有一个处理器占用共享内存
@@ -176,7 +177,107 @@ UNSAFE_END
 >7，waitStatus，该Node节点规定了6种状态
 >8，获得AQS的同步状态就代表着线程获取了锁
 >9，对于同步队列，每一个节点之间是没有感知的，每个线程在尝试获取同步状态失败后，都会走一遍独占式获取同步状态的流程，包括加入队列尾部，进入等待状态，或者被前驱唤醒等，各个队列节点的独立工作，构成了多线程争抢设置AQS同步状态的场景，获得AQS的同步状态就代表着线程获取了锁
+``` 读写锁：
+public class CacheData {
 
-![Alt text](./lock-AbstractQueuedSynchronizer-waitStatus.png "java常用锁分类")
+    Object data; // 正真的数据
+    volatile boolean cacheValid; // 缓存是否有效
+    final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+
+    void processCacheDate(){
+        rwl.readLock().lock(); // 1\. 先获取 readLock
+        if(!cacheValid){       // 2\. 发现数据不有效
+            // Must release read lock before acquiring write lock
+            rwl.readLock().unlock(); // 3\. 释放 readLock
+            rwl.writeLock().lock();  // 4\. 获取 writeLock
+            try{
+                // Recheck state because another thread might have
+                // acquired write lock and changed state before we did
+                if(!cacheValid){            // 5\. 重新确认数据是否真的无效
+                    // data = ...           // 6\. 进行数据 data 的重新赋值
+                    cacheValid = true;      // 7\. 重置标签 cacheValid
+                }
+                // Downgrade by acquiring read lock before releasing write lock
+                rwl.readLock().lock();      // 8\. 在获取 writeLock 的前提下, 再次获取 readLock
+            }finally{
+                rwl.writeLock().unlock(); // Unlock write, still hold read // 9\. 释放 writeLock, 完成锁的降级
+            }
+        }
+
+        try{
+            // use(data);
+        }finally{
+            rwl.readLock().unlock(); // 10\. 释放 readLock
+        }
+    }
+
+}
+```
+* [读写锁源码以及使用介绍](https://www.jianshu.com/p/5083f22af55f)
+![Alt text](./lock-AbstractQueuedSynchronizer-waitStatus.png "线程-锁-的状态")
 * [锁的详细介绍](https://tech.meituan.com/2018/11/15/java-lock.html)
 ![Alt text](./java-locks.png "java常用锁分类")
+
+### 并发编程的艺术
+>1，Java的并发采用的是共享内存模型，Java线程之间的通信总是隐式进行
+>2，在Java中，所有实例域、静态域和数组元素都存储在堆内存中，堆内存在线程之间共享 
+
+#### happens-before
+>1，在JMM中，如果一 个操作执行的结果需要对另一个操作可见，那么这两个操作之间必须要存在happens-before关系
+>2，程序顺序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作。
+>3，监视器锁规则：对一个锁的解锁，happens-before于随后对这个锁的加锁。
+>4，volatile变量规则：对一个volatile域的写，happens-before于任意后续对这个volatile域的读
+>5，传递性：如果A happens-before B，且B happens-before C，那么A happens-before 
+
+#### 数据依赖关系，控制依赖关系
+
+#### as-if-serial
+>1，语义是：不管怎么重排序（编译器和处理器为了提高并行度），**（单线程） 程序的执行结果不能被改变**
+>2，在单线程程序中，对存在控制依赖的操作重排序，不会改变执行结果（这也是as-if-serial语义允许对存在控制依赖的操作做重排序的原因）；但在多线程程序中，对存在控制依赖的操作重排序，可能会改变程序的执行结果
+
+
+##### 举例
+>1，flag变量是个标记，用来标识变量a是否已被写入。这里假设有两个线程A和B，A首先执行 writer()方法，随后B线程接着执行reader()方法。线程B在执行操作4时，能否看到线程A在操作 1对共享变量a的写入呢？ 答案是：**不一定能看到，于操作1和操作2没有数据依赖关系，编译器和处理器可以对这两个操作重排序**，
+```
+class ReorderExample {      
+    int a = 0;       
+    boolean flag = false;      
+    public void writer() {          
+           a = 1;                  // 1           
+           flag = true;            // 2       
+    }       
+    Public void reader() {           
+        if (flag) {            // 3               
+            int i =  a * a;     // 4              
+            ……          
+        }       
+    } 
+}
+```
+
+### 顺序一致性
+>1，常用同步原语 （synchronized、volatile和final）
+>2，如果程序是正确同步的，程序的执行将具有顺序一致性（Sequentially Consistent）——即程序的执行结果与该程序在顺序一致性内存模型中的执行结果相同
+>3，处理器的内存模型和编程语言的内存模型都会以顺序一致性内存模型作为参照
+
+### 顺序一致性内存模型
+>1，一个线程中的所有操作必须按照程序的顺序来执行
+>2，（不管程序是否同步）所有线程都只能看到一个单一的操作执行顺序。在顺序一致性内
+存模型中，每个操作都必须原子执行且立刻对所有线程可见
+
+![Alt text](./JMM-重排序.png "JMM内存模型和顺序一致性内存模型对比")
+
+#### 未同步程序的执行特性
+>1，对于未同步或未正确同步的多线程程序，JMM只提供最小安全性：线程执行时读取到的 值，要么是之前某个线程写入的值，要么是默认值（0，Null，False），JMM保证线程读操作读取 到的值不会无中生有（Out Of Thin Air）的冒出来。为了实现最小安全性，JVM在堆上分配对象 时，首先会对内存空间进行清零，然后才会在上面分配对象（JVM内部会同步这两个操作）。因 此，在已清零的内存空间（Pre-zeroed Memory）分配对象时，域的默认初始化已经完成了。
+
+### 线程
+>1，设置线程优先级时，针对频繁阻塞（休眠或者I/O操 作）的线程需要设置较高优先级，而偏重计算（需要较多CPU时间或者偏运算）的线程则设置较 低的优先级，确保处理器不会被独占
+>2，优先级决定了操作系统分配的资源情况，有些操作系统会忽略对线程优先级的设定
+
+![Alt text](./java-thread-status.png "线程状态转换")
+
+## 反射
+>1，sun.reflect.MethodAccessor->MethodAccessorImpl->NativeMethodAccessorImpl->{invoke->invoke0 是一个native方法} 中实现了反射method的invoke方法
+![Alt text](./java-reflect.png "反射类关系")
+
+* [反射-讲的不错](https://juejin.im/entry/5b3d6e2fe51d45199940bd39)

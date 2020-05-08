@@ -3,14 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="dda079ac-cbb7-46d8-a597-3da19a3d0ec2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../java基础/java-interview-questions.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/java-interview-questions.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../java基础/openJDK-openResource-CodeRevicew.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/openJDK-openResource-CodeRevicew.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ThreadPoolExecutor.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ThreadPoolExecutor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/atomic/AtomicStampedReference.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/atomic/AtomicStampedReference.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/AbstractQueuedSynchronizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/AbstractQueuedSynchronizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/ReentrantLock.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/ReentrantLock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../心得/码出高效-java开发手册.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../心得/码出高效-java开发手册.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/ReentrantReadWriteLock.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/ReentrantReadWriteLock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/sun/reflect/Reflection.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/sun/reflect/Reflection.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +32,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="D:/programDev/javaPro/tool-service-develop/tools-service/src/trunk" />
+    <property name="last_opened_file_path" value="D:/programDev/javaPro/recite-dev1.0.3/recite.ihuman.com" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Project" />
@@ -81,7 +77,12 @@
       <workItem from="1587696938082" duration="2097000" />
       <workItem from="1587702908856" duration="4959000" />
       <workItem from="1587900232697" duration="2924000" />
-      <workItem from="1587953037410" duration="2808000" />
+      <workItem from="1587953037410" duration="7223000" />
+      <workItem from="1588039665996" duration="1592000" />
+      <workItem from="1588125166142" duration="1939000" />
+      <workItem from="1588212985521" duration="4018000" />
+      <workItem from="1588756728767" duration="1466000" />
+      <workItem from="1588919568319" duration="4582000" />
     </task>
     <servers />
   </component>
@@ -118,10 +119,10 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="488" y="230" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1280.680@0.0.1280.680" timestamp="1585633582068" />
-    <state x="442" y="31" key="FileChooserDialogImpl" timestamp="1587703536318">
+    <state x="442" y="31" key="FileChooserDialogImpl" timestamp="1588216974549">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="442" y="31" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1587703536318" />
+    <state x="442" y="31" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1588216974549" />
     <state x="308" y="38" width="730" height="603" key="NewModule_or_Project.wizard" timestamp="1586313752247">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
@@ -138,9 +139,9 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="195" y="76" width="891" height="604" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1280.680@0.0.1280.680" timestamp="1586413598681" />
-    <state x="254" y="40" width="773" height="600" key="find.popup" timestamp="1587727547575">
+    <state x="254" y="40" width="773" height="600" key="find.popup" timestamp="1588763854736">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="254" y="40" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1587727547575" />
+    <state x="254" y="40" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1588763854736" />
   </component>
 </project>
