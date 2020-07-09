@@ -472,6 +472,7 @@ public enum LauncherHelper {
      * LM_CLASS mode
      * @return the application's main class
      */
+    // mode决定是直接传入的是主类还是jar文件，即区分java -jar xxx.jar 还是 java xxx.class
     public static Class<?> checkAndLoadMain(boolean printToStderr,
                                             int mode,
                                             String what) {

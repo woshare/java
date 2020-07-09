@@ -223,6 +223,8 @@ public final class ServiceLoader<S>
         service = Objects.requireNonNull(svc, "Service interface cannot be null");
         loader = (cl == null) ? ClassLoader.getSystemClassLoader() : cl;
         acc = (System.getSecurityManager() != null) ? AccessController.getContext() : null;
+       //这个地方没看太懂，怎么就用LazyIterator懒加载迭代器，就得到了实例化的对象了，虽然在这个类中，确实在做一些实例化的事情
+        //当我们在遍历的时候才去加载配置文件？？？
         reload();
     }
 

@@ -34,6 +34,13 @@
 
 （9）ConcurrentHashMap中有哪些不常见的技术值得学习？
 ```
+### 并发编程
+>1，CPU密集型，线程数=核数+1
+>2，IO密集型，线程数=CPU核心数 * (1/CPU利用率) = CPU核心数 * (1 + (I/O耗时/CPU耗时))
+>3，TPS（Transaction Per Second 或者 Task Per Second）
+
+* [定性定量分析，如何设定线程数，调优](https://www.jianshu.com/p/f30ee2346f9f)
+>这个页面让我突然意识到，有些东西其实都会一些，但是不知道怎么用，这实质就是没真正搞懂并且没有思考过，学习的时候蜻蜓点水，浅尝辄止。学而不思则罔。思而不学则殆。
 
 ### 其他类如何隐性继承Object
 >1，当一个类没有显式标明继承的父类时，虚拟机会为其指定一个默认的父类（一般为Object）,经过编译与反编译，可以排除不是编译器默认加上的，应该是 **虚拟机** 默认加上的
@@ -41,6 +48,8 @@
 ### 序列化是如何实现的，为什么implements java.io.Serializable
 
 ### 如何做一个maven依赖工具包啊，这样我们就不用总是重复造轮子了
+>1，有牛气的公司，都已经提供了很多好的工具包了，不一定要自己造轮子
+>2，但是要知道怎么造
 
 ### 字符和字符串编码与长度，GB2312,UTF-8,UTF-16
 
@@ -54,6 +63,7 @@
 >7，Lock前缀指令会引起处理器缓存回写到内存
 >8，一个处理器的缓存回写到内存会导致其他处理器的缓存无效
 >9，缓存一致性协议
+>10，Java虚拟机为了保证每个对象所占的空间都是8个字节倍数，有时候为了避免两个volatile字段存放在同一个缓存行，所以有时候会再某些字段上做空位填充
 
 ![Alt text](./volatile-mem.png "JMM简要内存数据传递")
 
@@ -278,6 +288,26 @@ class ReorderExample {
 
 ## 反射
 >1，sun.reflect.MethodAccessor->MethodAccessorImpl->NativeMethodAccessorImpl->{invoke->invoke0 是一个native方法} 中实现了反射method的invoke方法
+
+>2，NativeMethodAccessorImpl.invoke()中通过 numInvocations 判断如果该反射调用次数超过ReflectionFactory.inflationThreshold()则用字节码实现。如果小于该值则采用native实现，native的调用比字节码方式慢很多， 动态实现和本地实现相比执行效率要快20倍，因为动态实现无需经过JAVA,C++再到JAVA的转换，之前在jdk6以前有个工具ReflectAsm就是采用这种方式提升执行效率，不过在jdk8以后，也提供了字节码方式，由于许多反射只需要执行一次，然而动态方式生成字节码十分耗时，所以jdk提供了一个阈值默认15，当某个反射的调用次数小于15的话就走本地实现，大于15则走动态模式，而这个阈值可以在jdk启动参数里面做配置
+```
+public Object invoke(Object var1, Object[] var2) throws IllegalArgumentException, InvocationTargetException {
+        if(++this.numInvocations > ReflectionFactory.inflationThreshold() && !ReflectUtil.isVMAnonymousClass(this.method.getDeclaringClass())) {
+            MethodAccessorImpl var3 = (MethodAccessorImpl)(new MethodAccessorGenerator()).generateMethod(this.method.getDeclaringClass(), this.method.getName(), this.method.getParameterTypes(), this.method.getReturnType(), this.method.getExceptionTypes(), this.method.getModifiers());
+            this.parent.setDelegate(var3);
+        }
+
+        return invoke0(this.method, var1, var2);
+    }
+    private static native Object invoke0(Method var0, Object var1, Object[] var2);
+```
+
 ![Alt text](./java-reflect.png "反射类关系")
 
 * [反射-讲的不错](https://juejin.im/entry/5b3d6e2fe51d45199940bd39)
+
+![Alt text](./java-jdk-reflect.png "反射类关系")
+
+
+### Collection
+* [collection简单讲解，还不错](https://xie.infoq.cn/article/0b6413f22ee63a433de2e1672)

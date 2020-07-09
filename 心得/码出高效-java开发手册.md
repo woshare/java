@@ -101,7 +101,9 @@
 >2，当遇到需要处理异常的场景时，要明确该异常属于哪种类型，是需要调用方关注并处理的checked 异常， 还是由更高层次框架处理的unchecked 异常   
 >3，try-catch-finally，注意， **finally是在return表达式运行后执行的**， 此时将要return 的结果已经被暂存起来， 待finally 代码块执行结束后再将之前暂存的结果返回     
 >4，Error由虚拟机生成并抛出，，属于JVM系统内部错误或者资源耗尽等严重情况，属于JVM需要担负的责任，这一类异常事件是无法恢复或者不可能捕获的，将导致应用程序中断，但是自定义Error是可以捕获的        
-
+>5，异常限制（oop）：当覆盖方法的时候，只能抛出在基类方法的异常说明里列出的那些异常。这个限制很有用，因为这意味着，若当基类使用的代码应用到其派生类对象的时候，一样能够工作（当然，这是面向对象的基本概念），异常也不例外
+>6，异常丢失 try-catch-finally
+>7，尽可能使用 try-with-resource
 ``` 异常丢失：
 public class LostMessage {
     void f() throws VeryImportantException {
@@ -331,7 +333,14 @@ gcc  -I/$JAVA_HOME/include -I/$JAVA_HOME/include/darwin/ -I/$JAVA_HOME/include/l
 
 ![Alt text](./java-class-loader.png "Java类加载过程")
 
+![Alt text](./jvm-class-loader.jpg  "Java类加载过程")
+
 ![Alt text](./class-loader.png "双亲委派模型")
+
+![Alt text](./java-compile.jpg "java编译过程")
+
+![Alt text](./jvm-run-code.jpg "jvm编译或解释器")
+
 
 >如果想在启动时观察加载了哪个包中的哪个类， 可以java：TrashClassLoading参数， 此参数在解决类冲突时非常实用， 毕竟不同的JVM 环境对于加载类的顺序并非是一致的  
 
@@ -366,7 +375,7 @@ public class CustomClassLoader extends ClassLoader {
     public static void main(String[] args) {
         CustomClassLoader customClassLoader = new CustomClassLoader();
         try {
-            Class <?> clazz = C lass.forName("one",true,customClassLoader);
+            Class <?> clazz = Class.forName("one",true,customClassLoader);
             Object obj = clazz.newinstance() ;
             System.out.println (obj.getClass().getClassLoader()) ;
         } catch (Exception e) {
@@ -375,7 +384,7 @@ public class CustomClassLoader extends ClassLoader {
     }
 }
 ```
->由于中间件一般都有自己的依赖jar 包，在同个工程内引用多个框架时， 往往被迫进行类的仲裁。按某种规则jar 包的版本被统一指定，导致某些类存在包路径、类名相同的情况， 就会引起类冲突，导致应用程序出现异常。主流的容器类框架都会自定义类加载器，实现不同中间件之间的类隔离， 有效避免了类冲突。
+>由于中间件一般都有自己的依赖jar 包，在同个工程内引用多个框架时， 往往被迫进行类的仲裁。按某种规则jar 包的版本被统一指定，导致某些类存在 **包路径、类名相同的情况， 就会引起类冲突，导致应用程序出现异常**。主流的容器类框架都会自定义类加载器，实现不同中间件之间的类隔离，有效避免了类冲突。
 
 ### 线程与内存
 >从线程共享的角度来看，堆和元空间是所有线程共享的，而虚拟机枝、本地方法枝、程序计数器是线程内部私有的，从这个角度看下Java 内存结构   
@@ -412,6 +421,23 @@ public class CustomClassLoader extends ClassLoader {
 #### 直接指针访问对象
 >直接指针访问：reference存储的对象地址
 ![Alt text](./pointer-visite-object.png "直接指针访问对象")
+
+#### main方法是如何加载的
+>1，Java.c中的LoadMainClass，该方法负责加载main函数所在的类
+>2，首先加载sun.launcher.LauncherHelper类，然后调用该类的checkAndLoadMain去加载main函数所在的类
+>3，加载过程：LoadMainClass(src/share/bin/java.c)->checkAndLoadMain(sun.launcher.LauncherHelper)->ClassLoader.getSystemClassLoader()->initSystemClassLoader->sun.misc.Launcher.getLauncher()->{
+    var1 = Launcher.ExtClassLoader.getExtClassLoader();
+    this.loader = Launcher.AppClassLoader.getAppClassLoader(var1);
+    Thread.currentThread().setContextClassLoader(this.loader);}
+* [main方法加载解析-不错](https://www.jianshu.com/p/8e44637fd5ce)
+* [main方法執行来解析jvm过程-不错](https://blog.csdn.net/Architect0719/article/details/50486933)
+
+![Alt text](./jvm-loader-mem-struct.png "jvm内存模型")
+![Alt text](./jvm-class-field.png "jvm-class-file")
+![Alt text](./jvm-class-method-area.png "jvm-class-file")
+![Alt text](./loading-verify-init.png "loading-verify-init")
+
+>4，在JVM实现中，线程为Execution Engine的一个实例，main函数是JVM指令执行的起点，JVM会创建main线程来执行main函数，以触发JVM一系列指令的执行，真正地把JVM run起来。在创建main线程时，会为其分配私有的PC Register、JVM Stack、Native Method Stack，当然在HotSpot的实现中，JVM Stack、Native Method Stack功能上已经合并
 
 
 ####  类的加载顺序
