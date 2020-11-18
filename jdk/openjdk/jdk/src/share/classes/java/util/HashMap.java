@@ -393,18 +393,18 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * (We also tolerate length zero in some operations to allow
      * bootstrapping mechanics that are currently not needed.)
      */
-    transient Node<K,V>[] table;
+    transient Node<K,V>[] table; //数据存储，默认大小16
 
     /**
      * Holds cached entrySet(). Note that AbstractMap fields are used
      * for keySet() and values().
      */
-    transient Set<Map.Entry<K,V>> entrySet;
+    transient Set<Map.Entry<K,V>> entrySet;//用于Map遍历的集合
 
     /**
      * The number of key-value mappings contained in this map.
      */
-    transient int size;
+    transient int size;//当前数量
 
     /**
      * The number of times this HashMap has been structurally modified
@@ -413,7 +413,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * rehash).  This field is used to make iterators on Collection-views of
      * the HashMap fail-fast.  (See ConcurrentModificationException).
      */
-    transient int modCount;
+    transient int modCount;//操作次数
 
     /**
      * The next size value at which to resize (capacity * load factor).
@@ -424,14 +424,14 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     // Additionally, if the table array has not been allocated, this
     // field holds the initial array capacity, or zero signifying
     // DEFAULT_INITIAL_CAPACITY.)
-    int threshold;
+    int threshold;//size超过多少时需要扩容，默认16
 
     /**
      * The load factor for the hash table.
      *
      * @serial
      */
-    final float loadFactor;
+    final float loadFactor;//负载因子，默认0.75f
 
     /* ---------------- Public operations -------------- */
 
@@ -649,7 +649,10 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         Node<K,V>[] tab;
         Node<K,V> p;
         int n, i;
+<<<<<<< HEAD
         //如果哈希表为空，调用resize()创建一个哈希表，并用变量n记录哈希表长度
+=======
+>>>>>>> save
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
         /**
