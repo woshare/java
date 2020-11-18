@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dda079ac-cbb7-46d8-a597-3da19a3d0ec2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../java基础/java-interview-questions.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/java-interview-questions.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../java基础/mybaits.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/mybaits.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../java基础/openJDK-openResource-CodeRevicew.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/openJDK-openResource-CodeRevicew.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../java基础/tomcat-http-tcp.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/tomcat-http-tcp.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../java基础/分布式.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/分布式.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/util/ServiceLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/util/ServiceLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/sun/launcher/LauncherHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/sun/launcher/LauncherHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../心得/码出高效-java开发手册.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../心得/码出高效-java开发手册.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,6 +100,14 @@
       <workItem from="1592445555938" duration="1233000" />
       <workItem from="1592532116727" duration="1693000" />
       <workItem from="1592817059535" duration="3069000" />
+      <workItem from="1594295783959" duration="394000" />
+      <workItem from="1594346523798" duration="1024000" />
+      <workItem from="1594362878050" duration="1538000" />
+      <workItem from="1594638080987" duration="598000" />
+      <workItem from="1594798183203" duration="641000" />
+      <workItem from="1599643856809" duration="1051000" />
+      <workItem from="1599644960741" duration="2992000" />
+      <workItem from="1602165551385" duration="442000" />
     </task>
     <servers />
   </component>
@@ -125,45 +128,21 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state x="233" y="0" key="#Project_Structure" timestamp="1586314412156">
+    <state x="442" y="31" key="FileChooserDialogImpl" timestamp="1594379409664">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="233" y="0" key="#Project_Structure/0.0.1280.680@0.0.1280.680" timestamp="1586314412156" />
-    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586920072174">
+    <state x="442" y="31" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1594379409664" />
+    <state x="308" y="38" width="730" height="603" key="NewModule_or_Project.wizard" timestamp="1594379413273">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1586920072174" />
-    <state x="468" y="56" key="#com.intellij.ide.ui.customization.CustomizableActionsPanel.FindAvailableActionsDialog" timestamp="1586312706520">
+    <state x="308" y="38" width="730" height="603" key="NewModule_or_Project.wizard/0.0.1280.680@0.0.1280.680" timestamp="1594379413273" />
+    <state x="325" y="165" key="com.intellij.ide.util.TipDialog" timestamp="1602165555067">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="468" y="56" key="#com.intellij.ide.ui.customization.CustomizableActionsPanel.FindAvailableActionsDialog/0.0.1280.680@0.0.1280.680" timestamp="1586312706520" />
-    <state x="488" y="230" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1585633582068">
+    <state x="325" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1602165555067" />
+    <state x="191" y="62" width="773" height="600" key="find.popup" timestamp="1594295912324">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="488" y="230" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1280.680@0.0.1280.680" timestamp="1585633582068" />
-    <state x="442" y="31" key="FileChooserDialogImpl" timestamp="1592446187426">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="442" y="31" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1592446187426" />
-    <state x="308" y="38" width="730" height="603" key="NewModule_or_Project.wizard" timestamp="1586313752247">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="308" y="38" width="730" height="603" key="NewModule_or_Project.wizard/0.0.1280.680@0.0.1280.680" timestamp="1586313752247" />
-    <state x="142" y="0" key="SettingsEditor" timestamp="1586313799832">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="142" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1586313799832" />
-    <state x="325" y="165" key="com.intellij.ide.util.TipDialog" timestamp="1592532557457">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="325" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1592532557457" />
-    <state x="195" y="76" width="891" height="604" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1586413598681">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="195" y="76" width="891" height="604" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1280.680@0.0.1280.680" timestamp="1586413598681" />
-    <state x="191" y="62" width="773" height="600" key="find.popup" timestamp="1592817073574">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="191" y="62" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1592817073574" />
+    <state x="191" y="62" width="773" height="600" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1594295912324" />
   </component>
 </project>
