@@ -1,5 +1,12 @@
 # Mybaits 学习
 
+## idea导入mybatis
+>1，git clone
+>2，idea open
+>3，config set maven project
+>4，修改jdk 为1.8
+>5，可以maven 打包和运行test下的文件
+
 ## 看官方文档，看源码
 >1，抓主放次，梳理核心流程，整体到细节
 >2，源码调试，核心数据结构和关键类
@@ -36,9 +43,11 @@
 ### SqlSession->DefaultSqlSession->excutor
 ![Alt text](./mybatis-sql-excutor.png "sql-excutor")
 
->4，mybatis大概的一个结构或过程：SqlSessionFactory->SqlSession->DefaultSqlSession{configuration,executor,autocommit,dirty,cursorlist}->executot{transaction,exectuor(this),configuration,deferredLoads,localCache,localOutout,paramterCache}->transaction{connection,autocommit,level,datasource}
+>4，mybatis大概的一个结构或过程：SqlSessionFactory->SqlSession->DefaultSqlSession{configuration,executor,autocommit,dirty,cursorlist}->executor{transaction,exectuor(this),configuration,deferredLoads,localCache,localOutout,paramterCache}->transaction{connection,autocommit,level,datasource}
 
->5，查询的一个大概过程：query{statementHandle->statement.execute()->connection.execute()}
+>5,connection--->statement--->execute
+
+>6，查询的一个大概过程：query{statementHandle->statement.execute()->connection.execute()}
 
 ![Alt text](./mybaits-sql-select.png "sql-select")
 
@@ -46,6 +55,16 @@
 
 #### interface没有具体实现，在别的类里拓展实现的，如何用interface调用到了具体的方法，如果有多个类拓展实现呢？
 >1，和父类是一样的道理，就有类B拓展实现（implements）了接口A，我们可以把A=B，用A去调用B中的实现的A的方法
+
+## datasource
+
+
+### DataSource什么时候创建Connection对象
+>1,MyBatis创建了DataSource实例后，会将其放到Configuration对象内的Environment对象中， 供以后使用。当我们需要创建SqlSession对象并需要执行SQL语句时，这时候MyBatis才会去调用dataSource对象来创建java.sql.Connection对象。也就是说，java.sql.Connection对象的创建一直延迟到执行SQL语句的时候。
+
+![Alt text](./UnpooledDataSource.png "UnpooledDataSource")
+
+* [mybatis数据源与链接池](https://yq.aliyun.com/articles/641401?spm=a2c4e.11153940.0.0.430d396fCekMrD)
 
 
 ## 设计模式
@@ -191,4 +210,9 @@ ps:执行1.1,1.2，再执行2.1，是看不到1.2的操作的，只有再执行1
 >1，ThreadLocal内存泄漏的根源是：由于ThreadLocalMap的生命周期跟Thread一样长，如果没有手动删除对应key就会导致内存泄漏，而不是因为弱引用。想要避免内存泄露就要手动remove()掉
 
 ![Alt text](./ThreadLocal-Thread.png "ThreadLocal-Thread对象关系引用")
+
+
+##
+
+* [mybatis-不错](https://github.com/nero520/mybatis/tree/master/search-mybatis-mybatis/doc)
 
