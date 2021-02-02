@@ -385,19 +385,28 @@ public abstract class AbstractQueuedSynchronizer
 
         /** waitStatus value to indicate thread has cancelled */
         static final int CANCELLED =  1;
-        /** waitStatus value to indicate successor's thread needs unparking */
+        /** waitStatus value to indicate successor's thread needs unparking   park 停车*/
         static final int SIGNAL    = -1;
         /** waitStatus value to indicate thread is waiting on condition */
         static final int CONDITION = -2;
         /**
          * waitStatus value to indicate the next acquireShared should
-         * unconditionally propagate
+         * unconditionally propagate 无条件传播
          */
         static final int PROPAGATE = -3;
-
+        /**
+         * 0	当一个Node被初始化的时候的默认值
+         * CANCELLED	为1，表示线程获取锁的请求已经取消了
+         * CONDITION	为-2，表示节点在等待队列中，节点线程等待唤醒
+         * PROPAGATE	为-3，当前线程处在SHARED情况下，该字段才会使用
+         * SIGNAL	为-1，表示线程已经准备好了，就等资源释放了
+         *
+         *
+         * https://tech.meituan.com/2019/12/05/aqs-theory-and-apply.html
+         */
         /**
          * Status field, taking on only the values:
-         *   SIGNAL:     The successor of this node is (or will soon be)
+         *   SIGNAL:     The successor （接班人） of this node is (or will soon be)
          *               blocked (via park), so the current node must
          *               unpark its successor when it releases or
          *               cancels. To avoid races, acquire methods must
@@ -654,7 +663,7 @@ public abstract class AbstractQueuedSynchronizer
          * non-cancelled successor.
          */
         Node s = node.next;
-        if (s == null || s.waitStatus > 0) {
+        if (s == null || s.waitStatus > 0) {//CANCELLED=1,SIGNAL=-1,CONDITION=-2,PROPAGATE=-3
             s = null;
             for (Node t = tail; t != null && t != node; t = t.prev)
                 if (t.waitStatus <= 0)
@@ -750,7 +759,7 @@ public abstract class AbstractQueuedSynchronizer
 
         // Skip cancelled predecessors
         Node pred = node.prev;
-        while (pred.waitStatus > 0)
+        while (pred.waitStatus > 0)//CANCELLED=1,SIGNAL=-1,CONDITION=-2,PROPAGATE=-3
             node.prev = pred = pred.prev;
 
         // predNext is the apparent node to unsplice. CASes below will
@@ -856,6 +865,7 @@ public abstract class AbstractQueuedSynchronizer
      * @param arg the acquire argument
      * @return {@code true} if interrupted while waiting
      */
+
     final boolean acquireQueued(final Node node, int arg) {
         boolean failed = true;//节点入队后，自旋尝试获取同步状态
         try {
@@ -1201,6 +1211,7 @@ public abstract class AbstractQueuedSynchronizer
         if (!tryAcquire(arg) &&
             acquireQueued(addWaiter(Node.EXCLUSIVE), arg))//表示节点处于独占模式
             selfInterrupt();
+        //为了防止因死循环导致CPU资源被浪费，我们会判断前置节点的状态来决定是否要将当前线程挂起
     }
 
     /**
@@ -1412,7 +1423,7 @@ public abstract class AbstractQueuedSynchronizer
              s.prev == head && (st = s.thread) != null) ||
             ((h = head) != null && (s = h.next) != null &&
              s.prev == head && (st = s.thread) != null))
-            return st;
+            return st;//获取头结点线程，执行了两次，如果两次都符合条件，说明没有其他线程在修改这个队列，即为所得
 
         /*
          * Head's next field might not have been set yet, or may have
@@ -1428,7 +1439,7 @@ public abstract class AbstractQueuedSynchronizer
             Thread tt = t.thread;
             if (tt != null)
                 firstThread = tt;
-            t = t.prev;
+            t = t.prev;//从尾结点，向前寻找头结点  ，如上的写法倒是看得懂，但是为什么要这么写呢，以后遇到这样的问题，我也知道这么写吗？
         }
         return firstThread;
     }

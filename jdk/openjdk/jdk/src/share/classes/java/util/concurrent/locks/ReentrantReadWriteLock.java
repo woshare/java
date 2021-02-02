@@ -282,13 +282,13 @@ public class ReentrantReadWriteLock
         /** 对 32 位的 int 进行分割 (对半 16) */
         static final int SHARED_SHIFT   = 16;
         static final int SHARED_UNIT    = (1 << SHARED_SHIFT);
-        static final int MAX_COUNT      = (1 << SHARED_SHIFT) - 1;
+        static final int MAX_COUNT      = (1 << SHARED_SHIFT) - 1;//65535
         static final int EXCLUSIVE_MASK = (1 << SHARED_SHIFT) - 1;
 
         /** Returns the number of shared holds represented in count  */
-        static int sharedCount(int c)    { return c >>> SHARED_SHIFT; }
+        static int sharedCount(int c)    { return c >>> SHARED_SHIFT; } //高16bit 是共享数，读状态
         /** Returns the number of exclusive holds represented in count  */
-        static int exclusiveCount(int c) { return c & EXCLUSIVE_MASK; }
+        static int exclusiveCount(int c) { return c & EXCLUSIVE_MASK; } //低16bit 是互斥数，写状态
 
         /**
          * A counter for per-thread read hold counts.
@@ -413,11 +413,11 @@ public class ReentrantReadWriteLock
             Thread current = Thread.currentThread();
             int c = getState();
             int w = exclusiveCount(c);
-            if (c != 0) {
+            if (c != 0) {//包含了读写状态，获取写锁时，如果已经存在了写或读状态
                 // (Note: if c != 0 and w == 0 then shared count != 0)
-                if (w == 0 || current != getExclusiveOwnerThread())
+                if (w == 0 || current != getExclusiveOwnerThread())//写状态为0 或者，用户锁的不是当前线程
                     return false;
-                if (w + exclusiveCount(acquires) > MAX_COUNT)
+                if (w + exclusiveCount(acquires) > MAX_COUNT)//不要超过2的16次方-1 =65535
                     throw new Error("Maximum lock count exceeded");
                 // Reentrant acquire
                 setState(c + acquires);
@@ -452,7 +452,7 @@ public class ReentrantReadWriteLock
             }
             for (;;) {
                 int c = getState();
-                int nextc = c - SHARED_UNIT;
+                int nextc = c - SHARED_UNIT;//state的高16bit -1
                 if (compareAndSetState(c, nextc))
                     // Releasing the read lock has no effect on readers,
                     // but it may allow waiting writers to proceed if
@@ -483,14 +483,14 @@ public class ReentrantReadWriteLock
              *    saturated, chain to version with full retry loop.
              */
             Thread current = Thread.currentThread();
-            int c = getState();
+            int c = getState();//读写锁总状态，高16bit读状态，低16bit写状态
             if (exclusiveCount(c) != 0 &&
                 getExclusiveOwnerThread() != current)
                 return -1;
-            int r = sharedCount(c);
+            int r = sharedCount(c);//提取读状态数
             if (!readerShouldBlock() &&
                 r < MAX_COUNT &&
-                compareAndSetState(c, c + SHARED_UNIT)) {
+                compareAndSetState(c, c + SHARED_UNIT)) {//int 的高16bit，代表共享数，加SHARED_UNIT=32 等于，高16bit +1
                 if (r == 0) {
                     firstReader = current;
                     firstReaderHoldCount = 1;
@@ -523,7 +523,7 @@ public class ReentrantReadWriteLock
             HoldCounter rh = null;
             for (;;) {
                 int c = getState();
-                if (exclusiveCount(c) != 0) {
+                if (exclusiveCount(c) != 0) {//说明有写锁存在，读锁不能获取
                     if (getExclusiveOwnerThread() != current)
                         return -1;
                     // else we hold the exclusive lock; blocking here

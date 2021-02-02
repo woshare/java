@@ -188,7 +188,7 @@ import java.util.concurrent.locks.LockSupport;
  * @since 1.8
  * @author Doug Lea
  */
-public class StampedLock implements java.io.Serializable {
+public class StampedLock implements java.io.Serializable {//乐观读写锁
     /*
      * Algorithmic notes:
      *
