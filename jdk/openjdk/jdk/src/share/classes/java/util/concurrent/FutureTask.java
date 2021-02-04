@@ -90,13 +90,13 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * NEW -> INTERRUPTING -> INTERRUPTED
      */
     private volatile int state;
-    private static final int NEW          = 0;
-    private static final int COMPLETING   = 1;
-    private static final int NORMAL       = 2;
-    private static final int EXCEPTIONAL  = 3;
-    private static final int CANCELLED    = 4;
-    private static final int INTERRUPTING = 5;
-    private static final int INTERRUPTED  = 6;
+    private static final int NEW          = 0;//新建，就绪
+    private static final int COMPLETING   = 1;//启动，完成中
+    private static final int NORMAL       = 2;//正常结束
+    private static final int EXCEPTIONAL  = 3;//异常结束
+    private static final int CANCELLED    = 4;//取消而结束
+    private static final int INTERRUPTING = 5;//中断中
+    private static final int INTERRUPTED  = 6;//中断
 
     /** The underlying callable; nulled out after running */
     private Callable<V> callable;
@@ -164,7 +164,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
     public boolean cancel(boolean mayInterruptIfRunning) {
         if (!(state == NEW &&
               UNSAFE.compareAndSwapInt(this, stateOffset, NEW,
-                  mayInterruptIfRunning ? INTERRUPTING : CANCELLED)))
+                  mayInterruptIfRunning ? INTERRUPTING : CANCELLED)))//新建未启动的任务，执行了这个，会被设置为CANCELLED，则永远不会被执行了
             return false;
         try {    // in case call to interrupt throws exception
             if (mayInterruptIfRunning) {

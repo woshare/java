@@ -52,12 +52,15 @@ public class AtomicIntegerArray implements java.io.Serializable {
     private static final Unsafe unsafe = Unsafe.getUnsafe();
     private static final int base = unsafe.arrayBaseOffset(int[].class);
     private static final int shift;
-    private final int[] array;
-
+    private final int[] array;//不是volatile
+    //数组寻址 数组寻址[i]位置地址 = 数组初始偏移+元素大小*i;(数组是连续的内存空间)
     static {
+        //获取比例值 即数组中单个元素的长度
         int scale = unsafe.arrayIndexScale(int[].class);
         if ((scale & (scale - 1)) != 0)
             throw new Error("data type scale not a power of two");
+        //数组偏移量  是获取例如 scale = 4 二进制位数是3  shift= 31 -29=2
+        //Integer.numberOfLeadingZeros 返回无符号整型i的最高非零位前面的0的个数 4的二进制 0100 1前面还有29个0
         shift = 31 - Integer.numberOfLeadingZeros(scale);
     }
 
@@ -67,7 +70,8 @@ public class AtomicIntegerArray implements java.io.Serializable {
 
         return byteOffset(i);
     }
-
+    //数组寻址 数组寻址[i]位置地址 = 数组初始偏移+元素大小*i;(数组是连续的内存空间)
+    //a[i]地址=i<<偏移量 + a[0]首地址
     private static long byteOffset(int i) {
         return ((long) i << shift) + base;
     }
@@ -91,7 +95,7 @@ public class AtomicIntegerArray implements java.io.Serializable {
      */
     public AtomicIntegerArray(int[] array) {
         // Visibility guaranteed by final field guarantees
-        this.array = array.clone();
+        this.array = array.clone();//复制一份
     }
 
     /**
@@ -213,6 +217,8 @@ public class AtomicIntegerArray implements java.io.Serializable {
      * @return the previous value
      */
     public final int getAndAdd(int i, int delta) {
+        //虽然array是final int[] ，但是在多线程下，是基于unsafe下CAS,先getIntVolatile获取这个地址偏移下的值，再去compareAndSwapInt
+        //是实现多线程下安全的本质逻辑
         return unsafe.getAndAddInt(array, checkedByteOffset(i), delta);
     }
 

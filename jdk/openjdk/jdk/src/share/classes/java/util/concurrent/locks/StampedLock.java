@@ -526,9 +526,31 @@ public class StampedLock implements java.io.Serializable {//乐观读写锁
      * since issuance of the given stamp; else false
      */
     public boolean validate(long stamp) {
-        U.loadFence();
+        U.loadFence();//在校验逻辑之前，会通过Unsafe的loadFence方法加入一个load内存屏障，目的是避免如下用例中步骤2,3和StampedLock.validate中锁状态校验运算发生重排序导致锁状态校验不准确的问题。
         return (stamp & SBITS) == (state & SBITS);
     }
+    /**
+     *  public double distanceFromOrigin() {
+     *         long stamp = stampedLock.tryOptimisticRead(); // 获得一个乐观读锁
+     *         // 注意下面两行代码不是原子操作
+     *         // 假设x,y = (100,200)
+     *         double currentX = x;                                          2
+     *         // 此处已读取到x=100，但x,y可能被写线程修改为(300,400)
+     *         double currentY = y;                                          3
+     *         // 此处已读取到y，如果没有写入，读取是正确的(100,200)
+     *         // 如果有写入，读取是错误的(100,400)
+     *         if (!stampedLock.validate(stamp)) { // 检查乐观读锁后是否有其他写锁发生
+     *             stamp = stampedLock.readLock(); // 获取一个悲观读锁
+     *             try {
+     *                 currentX = x;
+     *                 currentY = y;
+     *             } finally {
+     *                 stampedLock.unlockRead(stamp); // 释放悲观读锁
+     *             }
+     *         }
+     *         return Math.sqrt(currentX * currentX + currentY * currentY);
+     *     }
+     */
 
     /**
      * If the lock state matches the given stamp, releases the

@@ -485,7 +485,7 @@ public class ReentrantReadWriteLock
             Thread current = Thread.currentThread();
             int c = getState();//读写锁总状态，高16bit读状态，低16bit写状态
             if (exclusiveCount(c) != 0 &&
-                getExclusiveOwnerThread() != current)
+                getExclusiveOwnerThread() != current)//有读状态，或者当前独占线程不是当前线程
                 return -1;
             int r = sharedCount(c);//提取读状态数
             if (!readerShouldBlock() &&

@@ -376,8 +376,8 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      */
     private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
     //主要的控制状态，是一个复合类型的变量,其中包括了两个概念
-    //workerCount：表示有效的线程数目
-    //runState：线程池里线程的运行状态
+    //workerCount：表示有效的线程数目。compareAndIncrementWorkerCount 可以得出，低29bit，记录的是当前任务数
+    //runState：线程池里线程的运行状态 ， runStateOf 可以得出，高3bit表示运行状态
     private static final int COUNT_BITS = Integer.SIZE - 3;//32-3=29
     //0001 1111  1111 1111  1111 1111  1111 1111
     private static final int CAPACITY   = (1 << COUNT_BITS) - 1;

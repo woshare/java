@@ -998,7 +998,7 @@ public abstract class AbstractQueuedSynchronizer
             for (;;) {
                 final Node p = node.predecessor();
                 if (p == head) {
-                    int r = tryAcquireShared(arg);
+                    int r = tryAcquireShared(arg);//从CountDownLatch中的这个函数来看，一般没设置state，默认为0是独占模式，设置了，不为0，一般是共享模式
                     if (r >= 0) {
                         setHeadAndPropagate(node, r);
                         p.next = null; // help GC
@@ -1228,11 +1228,11 @@ public abstract class AbstractQueuedSynchronizer
      *        can represent anything you like.
      * @throws InterruptedException if the current thread is interrupted
      */
-    public final void acquireInterruptibly(int arg)
+    public final void acquireInterruptibly(int arg)//以可中断模式去获取锁，获取失败，则中断
             throws InterruptedException {
         if (Thread.interrupted())
             throw new InterruptedException();
-        if (!tryAcquire(arg))
+        if (!tryAcquire(arg))//获取不到锁，则删除这个任务，并中断
             doAcquireInterruptibly(arg);
     }
 
