@@ -219,6 +219,22 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     }
 
     /**
+     * 这个是我写的
+     * 为什么不是这样写呢，要是上面那种写法呢？是这种在并发下会有什么bug，亦或，效率太低？
+     * 上面那种拷贝元素的做法，在元素item是大容量的时候，是不是效率就不高了？
+     * @return
+     */
+    private E dequeue() {
+        Node<E> h = head;
+        Node<E> first = h.next;
+        h.next = first->next; // 头结点next指向第1个节点的下一个节点
+        first->next = first;//help GC
+        E x = first.item;
+        first.item = null;
+        return x;
+    }
+
+    /**
      * Locks to prevent both puts and takes.
      */
     void fullyLock() {
@@ -439,7 +455,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         takeLock.lockInterruptibly();
         try {
             while (count.get() == 0) {
-                notEmpty.await();
+                notEmpty.await();//1，会释放当前锁，2，中断，os会自动保存上下文 3，把这个线程节点放入condition FIFO队列中，4，等待signal唤醒，放入AQS等待队列中，就绪执行
             }
             x = dequeue();
             c = count.getAndDecrement();
