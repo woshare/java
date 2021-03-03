@@ -128,10 +128,67 @@ public interface AdaptiveExt2 {
 
 
 
+## 阅读技术分享
+* [阿里技术专家详解 Dubbo 实践，演进及未来规划](https://www.infoq.cn/article/iwzcap3jo_h5fjfbwozu)
+  
+>注册中心成为瓶颈：减少网格式NxM的信息推送量，服务分组
+>应用级维度和服务级维度？
+>CAP 理论：现在大部分主流而且在使用中的注册中心都是满足 CP 的，但是在互联网大集群环境下，期望的结果是满足 AP 的同时，能够满足最终一致性。在大集群环境下，可用性往往比强一致性的优先级更高
+>Eureka 是一个 AP 的应用，而且它是去中心化的。但是它有几点不足：1，性能；2，应用维度的服务注册，需要改造成服务维度的注册 
+>Consul 是一个比较专业的服务注册中心，但是性能是稍微差一点，且是要求数据的强一致性而牺牲部分可用性
+>Etcd 是 Zookeeper 的升级版，它参考了 Zookeeper 的很多实现，同时进行了较多优化
+>Nacos，去中心化，满足AP以及最终一致性，性能和Zookeeper相近
+
+>为什么Zookeeper 作为服务注册中心的公司在减少？因为Zookeeper是leader机制，是单点中心化，而且leader选举耗时很长且期间对外不可用
+>服务变更通知机制？能够控制变更通知的频率，合并变更通知，以减少网络数据
+
+>Dubbo 路由规则，按照覆盖范围可分为应用级别，服务级别，方法级别路由规则；按照功能纬度，可以分为黑名单，条件路由 ，TAG 路由规则。大部分路由需求都是可以通过组合来实现的，如应用级的黑名单可以通过应用级别+黑名单路由规则方式组合
+
+>全链路灰度发布:
+
+
+![Alt text](./dubbo-nacos-rpc.png "")
+![Alt text](./dubbo-nacos-register-config-meta.png "")   
+
+## 中台
+>1,核心本质是服务共享（一组可复用的服务），目标是支持前台的快速创新或试错，而实现的手段是微服务架构、敏捷基础设施和公共基础服务
+>2，来自阿里官方的定义：
+企业中台就是，将企业的核心能力随着业务不断发展以数字化形式沉淀到平台，形成以服务为中心，由业务中台和数据中台构建起数据闭环运转的运营体系，供企业更高效的进行业务探索和创新，实现以数字化资产的形态构建企业核心差异化竞争力。
+>结论：1、中台架构，简单地说，就是企业级能力的复用，一个种方法论，企业治理思想。
+>2、微服务，是可独立开发、维护、部署的小型业务单元，是一种技术架构方式。
+>3、中台并不是微服务，中台是一种企业治理思想和方法论，微服务是技术架构方式。
+>4、中台化的落地，需要使用微服务架构，通过微服务架构搭建中台架构所需要的原子服务，其核心是服务设计的原则和思想
+
+
+![Alt text](./ali-zhongtai.jpg "")
 
 
 
+>1，服务有多个不同的版本
+>2，只订阅
+>3，只注册
+>4，灰度测试
+>5，多注册中心
+>6，多协议机制
+>7，负载均衡：权重随机，权重轮询，最少活跃，一致性hash
+>8，直连服务提供者
+>9，集群容错：failover，failfast，failsafe，failback，forking，broadcast
 
+
+
+##
+
+模块 | 功能点 
+---------|----------
+dubbo-common模块|公共模块，提供了Dubbo SPI的实现、时间轮的实现、动态编译等通用的功能
+dubbo-remoting模块|远程通信模块，其中，dubbo-remoting-api是对整个模块的核心抽象，其他子模块基于其他开源框架对dubbo-remoting-api进行实现
+dubbo-rpc模块|RPC模块，依赖dubbo-remoting模块。其中，dubbo-remoting-api是整个dubbo-rpc模块的核心抽象，其他模块是对dubbo-remoting-api的实现
+dubbo-registry模块|与注册中心交互的模块。其中dubbo-registry-api是整个dubbo-registry的核心抽象，其他模块是对dubbo-registry-api的具体实现
+dubbo-config模块|解析对外暴露的配置的模块。其中，dubbo-config-api 子模块负责处理以API 方式使用Dubbo时的相关配置，dubbo-config-spring 子模块负责处理与 Spring 集成使用时的相关配置方式
+dubbo-metadata模块|元数据模块。其中，dubbo-metadata-api是对整个dubbo-metadata的抽象，其他模块是对dubbo-metadata-api的实现
+dubbo-configcenter模块|配置中心模块，其中，提供了多种服务发现的方式并接入了多种服务发现组件
+dubbo-monitor模块|主要用于统计服务调用次数、调用时间以及实现调用链跟踪的服务
+dubbo-cluster模块|集群管理模块，主要提供负载均衡、容错、路由等功能
 
 
 
