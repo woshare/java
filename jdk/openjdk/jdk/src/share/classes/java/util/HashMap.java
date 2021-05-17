@@ -649,10 +649,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         Node<K,V>[] tab;
         Node<K,V> p;
         int n, i;
-<<<<<<< HEAD
+
         //如果哈希表为空，调用resize()创建一个哈希表，并用变量n记录哈希表长度
-=======
->>>>>>> save
+
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
         /**

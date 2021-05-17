@@ -1404,15 +1404,16 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                 return;
             c = ctl.get();
         }
-        //线程池还是可运行的
+        //线程池还是可运行的,将任务放入阻塞队列，double-check线程池状态
         if (isRunning(c) && workQueue.offer(command)) {
             int recheck = ctl.get();
+            ////如果再次check，发现线程池状态不是运行状态了，移除刚才添加进来的任务，并且拒绝改任务
             if (! isRunning(recheck) && remove(command))
                 reject(command);
             else if (workerCountOf(recheck) == 0)
                 addWorker(null, false);
         }
-        else if (!addWorker(command, false))
+        else if (!addWorker(command, false))//任务队列满，则创建线程去执行，若达到线程上限，则创建失败，执行拒绝策略
             reject(command);
     }
 
