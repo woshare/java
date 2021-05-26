@@ -196,6 +196,387 @@ dubbo-cluster模块|集群管理模块，主要提供负载均衡、容错、路
 
 
 
+## nacos
+
+![](nacos-framework.jpeg "nacos架构")
+
+![](nacos-register-center-thinking.png "")
+![](nacos-register-framework.png "")
+
+### 核心功能
+>1,服务注册：Nacos Client 会通过发送 REST 请求的方式向 Nacos Server 注册自己的服务，提供自身的元数据，比如 ip 地址、端口等信息。Nacos Server 接收到注册请求后，就会把这些元数据信息存储在一个双层的内存 Map 中。
+>2,服务心跳：在服务注册后，Nacos Client 会维护一个定时心跳来持续通知 Nacos Server，说明服务一直处于可用状态，防止被剔除。默认 5s 发送一次心跳。
+>3,服务同步：Nacos Server 集群之间会互相同步服务实例，用来保证服务信息的一致性。
+>4,服务发现：服务消费者（Nacos Client）在调用服务提供者的服务时，会发送一个 REST 请求给 Nacos Server，获取上面注册的服务清单，并且缓存在 Nacos Client 本地，同时会在 Nacos Client 本地开启一个定时任务定时拉取服务端最新的注册表信息更新到本地缓存。
+>5,服务健康检查：Nacos Server 会开启一个定时任务用来检查注册服务实例的健康情况，对于超过 15s 没有收到客户端心跳的实例会将它的 healthy 属性置为 false(客户端服务发现时不会发现)，如果某个实例超过 30 秒没有收到心跳，直接剔除该实例(被剔除的实例如果恢复发送心跳则会重新注册)。
+
+* [nacos源码简要讲解-不错](https://zhuanlan.zhihu.com/p/70478036)
+
+![](nacos-all-project-struct.jpg "")
+
+![](nacos-module-dependency.jpg "")
+
+![](nacos-request-model.jpg "")
+
+![](nacos-service-find.png "")
+
+>核心内容就集中在nacos-console，nacos-naming，nacos-config,再借助nacos-examples促进理解
+
+>请求方是nacos-client，接收方最终都是落到nacos-config服务上，最后使用JdbcTemplate进行数据持久化
+
+### Istio
+>Istio 作为 Service Mesh 解决方案事实上的标准，解决了开发人员和运维人员所面临的从单体应用向分布式微服务架构转变的挑战。Istio 提供了对整个服务网格的行为洞察和操作控制的能力，以及一个完整的满足微服务应用各种需求的解决方案
+
+>MCP实现
+MCP为轻松集成外部系统打开了大门。我们可以自己实现一个MCP服务器，并将其和Istio集成起来。MCP服务器提供两个主要功能：
+
+连接并监视外部服务注册系统以获取最新的服务信息（例如Spring Cloud中的Eureka Server和Apache Dubbo的Zookeeper）。
+将外部服务信息转换为Istio ServiceEntry并通过MCP资源发布
+
+
+```
+public class ServiceManager implements RecordListener<Service> {
+
+    /**
+     * Map<namespace, Map<group::serviceName, Service>>
+     */
+    private Map<String, Map<String, Service>> serviceMap = new ConcurrentHashMap<>();
+
+    //com.alibaba.nacos.naming.core.Service，Service是包含了Instance，一个Service下有多个Instance，即可组成一个Cluster。
+
+    //service下有
+    //private Map<String, Cluster> clusterMap = new HashMap<>();
+}
+```
+
+![](nacos-eventDispatcher.png "")
+![](nacos-heartbeat.png "")
+
+![](nacos-client-server-process.png "")
+
+* [nacos-大致源码讲解-不错](https://blog.csdn.net/weixin_39890332/article/details/111631748)
+  
+### 服务下线
+>1，InstanceController中可以看到下线接口：delete /nacos/v1/ns/instance
+>2,删除掉要下线的instance，把剩余的所有，再更新，如果有集群，还需要基于udp 同步到其他子节点
+
+* [优雅的nacos下线服务实例](https://zhuanlan.zhihu.com/p/346675620)
+
+
+![](nacos-service-info-store-update.png "")
+
+### 如何做到服务发现和注册
+>从提供者（被调用方）的角度看，NACOS是通过定时器来实时更新ServiceInfo，主要业务逻辑是在HostReactor中实现的。与前述的serviceMap不一样，HostReactor中维护的是serviceInfoMap。
+```
+private Map<String, ServiceInfo> serviceInfoMap; 
+```
+
+>从消费者（调用方）的角度来看，集成的starter项目中有个类：NacosServerList，最重要的是继承了AbstractServerList，实现了两个关键的接口方法，相当于是NACOS与Ribbon的对接点。
+```
+public interface ServerList<T extends Server> {
+
+    public List<T> getInitialListOfServers();
+    
+    /**
+     * Return updated list of servers. This is called say every 30 secs
+     * (configurable) by the Loadbalancer's Ping cycle
+     * 
+     */
+    public List<T> getUpdatedListOfServers();   
+
+}
+```
+>NACOS对于这个两个接口的实现，都使用了getServers方法，而进入到getServers方法体里面，其实就是利用了上述所说的NacosNamingService.selectInstances方法，通过serviceId获取到ServiceInfo对象，然后获取到Service下面的所有有效的Instance。
+
+
+
+## nacos 源码阅读
+
+## 注册表
+
+### RaftConsistency
+>1，主要存入datums，raft.store 存入磁盘
+
+###
+>1,DataStore{ private Map<String, Datum> dataMap = new ConcurrentHashMap<>(1024);}
+
+### 服务注册
+
+>1，在idea左侧看maven：spring-cloud-starter-alibaba-nacos-discovery
+>2，找到register模块下有
+```
+public class NacosAutoServiceRegistration
+		extends AbstractAutoServiceRegistration<Registration> {
+
+	@Override
+	protected void register() {
+		if (!this.registration.getNacosDiscoveryProperties().isRegisterEnabled()) {
+			log.debug("Registration disabled.");
+			return;
+		}
+		if (this.registration.getPort() < 0) {
+			this.registration.setPort(getPort().get());
+		}
+		super.register();
+	}
+}
+AbstractAutoServiceRegistration {
+public void onApplicationEvent(WebServerInitializedEvent event) {
+    this.bind(event);
+  }
+
+  /** @deprecated */
+  @Deprecated
+  public void bind(WebServerInitializedEvent event) {
+    ApplicationContext context = event.getApplicationContext();
+    if (!(context instanceof ConfigurableWebServerApplicationContext) || !"management".equals(((ConfigurableWebServerApplicationContext)context).getServerNamespace())) {
+      this.port.compareAndSet(0, event.getWebServer().getPort());
+      this.start();
+    }
+  }
+public void start() {
+    if (!this.isEnabled()) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Discovery Lifecycle disabled. Not starting");
+      }
+
+    } else {
+      if (!this.running.get()) {
+        this.context.publishEvent(new InstancePreRegisteredEvent(this, this.getRegistration()));
+        this.register();//调用
+        if (this.shouldRegisterManagement()) {
+          this.registerManagement();
+        }
+
+        this.context.publishEvent(new InstanceRegisteredEvent(this, this.getConfiguration()));
+        this.running.compareAndSet(false, true);
+      }
+
+    }
+  }
+
+}
+```
+
+>3，继而找到spring-cloud-common 下的 AbstractAutoServiceRegistration
+
+```
+  protected void register() {
+    this.serviceRegistry.register(this.getRegistration());
+  }
+```
+>4，继而定位到spring-cloud-starter-alibaba-nacos-discovery下NacosServiceRegistry
+
+
+```
+public class NacosServiceRegistry implements ServiceRegistry<Registration> {
+@Override
+	public void register(Registration registration) {
+
+		if (StringUtils.isEmpty(registration.getServiceId())) {
+			log.warn("No service to register for nacos client...");
+			return;
+		}
+
+		String serviceId = registration.getServiceId();
+		String group = nacosDiscoveryProperties.getGroup();
+
+		Instance instance = getNacosInstanceFromRegistration(registration);
+
+		try {
+            //注册
+			namingService.registerInstance(serviceId, group, instance);
+			log.info("nacos registry, {} {} {}:{} register finished", group, serviceId,
+					instance.getIp(), instance.getPort());
+		}
+		catch (Exception e) {
+			log.error("nacos registry, {} register failed...{},", serviceId,
+					registration.toString(), e);
+			// rethrow a RuntimeException if the registration is failed.
+			// issue : https://github.com/alibaba/spring-cloud-alibaba/issues/1132
+			rethrowRuntimeException(e);
+		}
+	}
+
+
+private Instance getNacosInstanceFromRegistration(Registration registration) {
+		Instance instance = new Instance();
+		instance.setIp(registration.getHost());
+		instance.setPort(registration.getPort());
+		instance.setWeight(nacosDiscoveryProperties.getWeight());
+		instance.setClusterName(nacosDiscoveryProperties.getClusterName());
+		instance.setMetadata(registration.getMetadata());
+
+		return instance;
+	}
+}
+
+
+namingService.registerInstance(serviceId, group, instance)：调用http：
+ public void registerInstance(String serviceName, String groupName, Instance instance) throws NacosException {
+    if (instance.isEphemeral()) {
+      BeatInfo beatInfo = new BeatInfo();
+      beatInfo.setServiceName(NamingUtils.getGroupedName(serviceName, groupName));
+      beatInfo.setIp(instance.getIp());
+      beatInfo.setPort(instance.getPort());
+      beatInfo.setCluster(instance.getClusterName());
+      beatInfo.setWeight(instance.getWeight());
+      beatInfo.setMetadata(instance.getMetadata());
+      beatInfo.setScheduled(false);
+      long instanceInterval = instance.getInstanceHeartBeatInterval();
+      beatInfo.setPeriod(instanceInterval == 0L ? DEFAULT_HEART_BEAT_INTERVAL : instanceInterval);
+      //心跳请求
+      this.beatReactor.addBeatInfo(NamingUtils.getGroupedName(serviceName, groupName), beatInfo);
+    }
+
+    this.serverProxy.registerService(NamingUtils.getGroupedName(serviceName, groupName), groupName, instance);
+  }
+  /**
+    WEB_CONTEXT = "/nacos";
+    NACOS_URL_BASE = WEB_CONTEXT + "/v1/ns";
+    NACOS_URL_INSTANCE = NACOS_URL_BASE + "/instance";
+    NACOS_URL_SERVICE = NACOS_URL_BASE + "/service";
+    UtilAndComs.NACOS_URL_BASE + "/instance/beat";//心跳接口 /nacos/v1/ns/instance/beat
+**/
+  public void registerService(String serviceName, String groupName, Instance instance) throws NacosException {
+    LogUtils.NAMING_LOGGER.info("[REGISTER-SERVICE] {} registering service {} with instance: {}", new Object[]{this.namespaceId, serviceName, instance});
+    Map<String, String> params = new HashMap(9);
+    params.put("namespaceId", this.namespaceId);
+    params.put("serviceName", serviceName);
+    params.put("groupName", groupName);
+    params.put("clusterName", instance.getClusterName());
+    params.put("ip", instance.getIp());
+    params.put("port", String.valueOf(instance.getPort()));
+    params.put("weight", String.valueOf(instance.getWeight()));
+    params.put("enable", String.valueOf(instance.isEnabled()));
+    params.put("healthy", String.valueOf(instance.isHealthy()));
+    params.put("ephemeral", String.valueOf(instance.isEphemeral()));
+    params.put("metadata", JSON.toJSONString(instance.getMetadata()));
+    this.reqAPI(UtilAndComs.NACOS_URL_INSTANCE, params, (String)"POST");
+  }
+
+/**
+*api=/nacos/v1/ns/instance
+*params=和instance内容差不多，因为是map，拷贝不了内容
+*servers=[127.0.0.1:8848]
+*method=POST
+*/
+ public String reqAPI(String api, Map<String, String> params, List<String> servers, String method) {
+    params.put("namespaceId", this.getNamespaceId());
+    if (CollectionUtils.isEmpty(servers) && StringUtils.isEmpty(this.nacosDomain)) {
+      throw new IllegalArgumentException("no server available");
+    } else {
+      Exception exception = new Exception();
+      if (servers != null && !servers.isEmpty()) {
+        Random random = new Random(System.currentTimeMillis());
+        int index = random.nextInt(servers.size());
+
+        for(int i = 0; i < servers.size(); ++i) {
+            //集群节点都同步?
+          String server = (String)servers.get(index);
+
+          try {
+              //callServer见下面源码，是对http/https请求的封装
+            return this.callServer(api, params, server, method);
+          } catch (NacosException var11) {
+            exception = var11;
+            LogUtils.NAMING_LOGGER.error("request {} failed.", server, var11);
+          } catch (Exception var12) {
+            exception = var12;
+            LogUtils.NAMING_LOGGER.error("request {} failed.", server, var12);
+          }
+
+          index = (index + 1) % servers.size();
+        }
+
+        throw new IllegalStateException("failed to req API:" + api + " after all servers(" + servers + ") tried: " + ((Exception)exception).getMessage());
+      } else {
+        int i = 0;
+
+        while(i < 3) {
+          try {
+            return this.callServer(api, params, this.nacosDomain);
+          } catch (Exception var13) {
+            exception = var13;
+            LogUtils.NAMING_LOGGER.error("[NA] req api:" + api + " failed, server(" + this.nacosDomain, var13);
+            ++i;
+          }
+        }
+
+        throw new IllegalStateException("failed to req API:/api/" + api + " after all servers(" + servers + ") tried: " + ((Exception)exception).getMessage());
+      }
+    }
+  }
+
+public String callServer(String api, Map<String, String> params, String curServer, String method) throws NacosException {
+    long start = System.currentTimeMillis();
+    long end = 0L;
+    this.checkSignature(params);
+    List<String> headers = this.builderHeaders();
+    String url;
+    if (!curServer.startsWith("https://") && !curServer.startsWith("http://")) {
+      if (!curServer.contains(":")) {
+        curServer = curServer + ":" + this.serverPort;
+      }
+
+      url = HttpClient.getPrefix() + curServer + api;
+    } else {
+      url = curServer + api;
+    }
+
+    HttpResult result = HttpClient.request(url, headers, params, "UTF-8", method);
+    end = System.currentTimeMillis();
+    MetricsMonitor.getNamingRequestMonitor(method, url, String.valueOf(result.code)).observe((double)(end - start));
+    if (200 == result.code) {
+      return result.content;
+    } else if (304 == result.code) {
+      return "";
+    } else {
+      throw new NacosException(500, "failed to req API:" + curServer + api + ". code:" + result.code + " msg: " + result.content);
+    }
+  }
+
+```
+
+### debug主动服务注册
+>1，在idea左侧maven：spring-cloud-starter-alibaba-nacos-discovery下NacosServiceRegistry register方法打断点
+>2，debug执行，可以看到一些具体的数据，以便理解
+### serviceId
+main-service
+### group
+DEFAULT_GROUP 
+### instance
+```
+instance：{"clusterName":"DEFAULT","enabled":true,"ephemeral":true,"healthy":true,"instanceHeartBeatInterval":5000,"instanceHeartBeatTimeOut":15000,"ip":"10.2.100.44","ipDeleteTimeout":30000,"metadata":{"dubbo.metadata-service.urls":"[ \"dubbo://10.2.100.44:20880/com.alibaba.cloud.dubbo.service.DubboMetadataService?anyhost=true&application=main-service&bind.ip=10.2.100.44&bind.port=20880&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&group=main-service&heartbeat=10000&interface=com.alibaba.cloud.dubbo.service.DubboMetadataService&methods=getAllServiceKeys,getServiceRestMetadata,getExportedURLs,getAllExportedURLs&payload=10485760&pid=13836&qos.enable=false&release=2.7.4.1&revision=2.2.0.RELEASE&side=provider&timestamp=1621508376534&version=1.0.0\" ]","dubbo.protocols.dubbo.port":"20880","preserved.register.source":"SPRING_CLOUD"},"port":8080,"weight":1.0}
+```
+### NacosRegistration
+```
+NacosRegistration{nacosDiscoveryProperties=NacosDiscoveryProperties{serverAddr='127.0.0.1:8848', endpoint='', namespace='', watchDelay=30000, logName='', service='main-service', weight=1.0, clusterName='DEFAULT', group='DEFAULT_GROUP', namingLoadCacheAtStart='false', metadata={dubbo.metadata-service.urls=[ "dubbo://10.2.100.44:20880/com.alibaba.cloud.dubbo.service.DubboMetadataService?anyhost=true&application=main-service&bind.ip=10.2.100.44&bind.port=20880&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&group=main-service&heartbeat=10000&interface=com.alibaba.cloud.dubbo.service.DubboMetadataService&methods=getAllServiceKeys,getServiceRestMetadata,getExportedURLs,getAllExportedURLs&payload=10485760&pid=13836&qos.enable=false&release=2.7.4.1&revision=2.2.0.RELEASE&side=provider&timestamp=1621508376534&version=1.0.0" ], dubbo.protocols.dubbo.port=20880, preserved.register.source=SPRING_CLOUD}, registerEnabled=true, ip='10.2.100.44', networkInterface='', port=8080, secure=false, accessKey='', secretKey='', heartBeatInterval=null, heartBeatTimeout=null, ipDeleteTimeout=null}}
+```
+
+### beatInfo：服务注册时会开启心跳请求，由ScheduledExecutorService线程定时执行，this.executorService.schedule(new BeatReactor.BeatTask(beatInfo), beatInfo.getPeriod(), TimeUnit.MILLISECONDS);
+
+>心跳请求接口：/nacos/v1/ns/instance/beat
+```
+{"cluster":"DEFAULT","ip":"10.2.100.44","metadata":{"dubbo.metadata-service.urls":"[ \"dubbo://10.2.100.44:20880/com.alibaba.cloud.dubbo.service.DubboMetadataService?anyhost=true&application=main-service&bind.ip=10.2.100.44&bind.port=20880&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&group=main-service&heartbeat=10000&interface=com.alibaba.cloud.dubbo.service.DubboMetadataService&methods=getAllServiceKeys,getServiceRestMetadata,getExportedURLs,getAllExportedURLs&payload=10485760&pid=13836&qos.enable=false&release=2.7.4.1&revision=2.2.0.RELEASE&side=provider&timestamp=1621508376534&version=1.0.0\" ]","dubbo.protocols.dubbo.port":"20880","preserved.register.source":"SPRING_CLOUD"},"period":5000,"port":8080,"scheduled":false,"serviceName":"DEFAULT_GROUP@@main-service","stopped":false,"weight":1.0}
+```
+
+## 一致性 CAP 【重要】
+
+* [数据一致性同步总览](https://blog.csdn.net/qq_19414183/article/details/112468193)
+![](./nacos-Consistency-CAP.png "")
+
+
+## 负载均衡
+>namespace->service->instance
+>1，可以基于namespace，group，cluster等进行环境隔离
+>2，在同一个领域空间做负载均衡，例如权重随机等
+
+![](nacos-namespace-group-service-cluster-instance.png "")
+
+### 为什么nacos需要负载均衡？
+
+
 ## kill 之前先 dump
 ``` 
 JAVA_HOME=/usr/java  

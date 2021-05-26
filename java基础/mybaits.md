@@ -25,6 +25,16 @@
 ### 整体框架
 ![Alt text](./mybaits-struct.png "整体框架")
 
+![Alt text](./mybatis-struct.png "整体框架")
+
+![Alt text](./excutor-cache-based.png "整体框架")
+
+>SqlSessionFactory 有两个实现类，一个是 SqlSessionManager 类，一个是 DefaultSqlSessionFactory 类
+
+>DefaultSqlSessionFactory : SqlSessionFactory 的默认实现类，是真正生产会话的工厂类，这个类的实例的生命周期是全局的，它只会在首次调用时生成一个实例（单例模式），就一直存在直到服务器关闭。
+
+>SqlSessionManager ： 已被废弃，原因大概是: SqlSessionManager 中需要维护一个自己的线程池，而使用MyBatis 更多的是要与 Spring 进行集成，并不会单独使用，所以维护自己的 ThreadLocal 并没有什么意义，所以 SqlSessionManager 已经不再使用。
+
 ### 初始化阶段-》代理阶段-》数据读写阶段
 ![Alt text](./mybaits-workflow.png "三大核心流程")
 
@@ -219,3 +229,7 @@ ps:执行1.1,1.2，再执行2.1，是看不到1.2的操作的，只有再执行1
 
 * [mybatis-不错](https://github.com/nero520/mybatis/tree/master/search-mybatis-mybatis/doc)
 
+
+## resultSetHandle
+
+> DefaultObjectFactory 这个会根据mapper returnType，创建出对象，

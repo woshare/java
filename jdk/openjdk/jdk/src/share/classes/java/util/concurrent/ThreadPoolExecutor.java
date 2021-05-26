@@ -642,7 +642,8 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         Worker(Runnable firstTask) {
             setState(-1); // inhibit interrupts until runWorker
             this.firstTask = firstTask;
-            this.thread = getThreadFactory().newThread(this);
+            //Executors.defaultThreadFactory()
+            this.thread = getThreadFactory().newThread(this);//thread.start->worker.run
         }
 
         /** Delegates main run loop to outer runWorker  */
@@ -993,7 +994,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     mainLock.unlock();
                 }
                 if (workerAdded) {
-                    t.start();//这个地方执行了线程，worker->run()->runWorker()->{beforeExecute();task.run();afterExecute();}
+                    t.start();//645行解释了线程和worker.run的关系。这个地方执行了线程，worker->run()->runWorker()->{beforeExecute();task.run();afterExecute();}
                     workerStarted = true;
                 }
             }
