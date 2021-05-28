@@ -224,6 +224,29 @@ dubbo-cluster模块|集群管理模块，主要提供负载均衡、容错、路
 
 >请求方是nacos-client，接收方最终都是落到nacos-config服务上，最后使用JdbcTemplate进行数据持久化
 
+
+
+
+### Nacos Server 宕机后，Consumer 依旧可以调用成功
+>1，Nacos 本地缓存的作用：当应用与服务注册中心发生网络分区或服务注册中心完全宕机后，应用进行了重启操作，内存里没有数据，此时应用可以通过读取本地缓存文件的数据来获取到最后一次订阅到的内容
+>2，可以在本机的 **/home/${user}/​nacos/naming/** （qa环境下/home/appuser/nacos/naming/public 有根据service分的文件，内容如下）下看到各个命名空间发布的所有服务的信息，其内容格式如下：
+
+```
+{"metadata":{},"dom":"DEFAULT_GROUP@@main-service","cacheMillis":10000,"useSpecifiedURL":false,"hosts":[{"valid":true,"marked":false,"metadata":{"dubbo.metadata-service.urls":"[ \"dubbo://10.147.28.11:20882/com.alibaba.cloud.dubbo.service.DubboMetadataService?anyhost=true&application=main-service&bind.ip=10.147.28.11&bind.port=20882&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&group=main-service&heartbeat=10000&interface=com.alibaba.cloud.dubbo.service.DubboMetadataService&methods=getAllServiceKeys,getServiceRestMetadata,getExportedURLs,getAllExportedURLs&payload=10485760&pid=6103&qos.enable=false&release=2.7.4.1&revision=2.2.0.RELEASE&side=provider&timestamp=1621845964662&version=1.0.0\" ]","dubbo.protocols.dubbo.port":"20882","preserved.register.source":"SPRING_CLOUD"},"instanceId":"10.147.28.11#8090#DEFAULT#DEFAULT_GROUP@@main-service","port":8090,"healthy":true,"ip":"10.147.28.11","clusterName":"DEFAULT","weight":1.0,"ephemeral":true,"serviceName":"DEFAULT_GROUP@@main-service","enabled":true}],"name":"DEFAULT_GROUP@@main-service","checksum":"ba2fd75b5ea964a57613bd2188b868f8","lastRefTime":1621845965710,"env":"","clusters":""}
+
+```
+### 为什么 Consumer 重启后，没有按照预期加载本地缓存文件
+缓存文件正常，问题只有可能出现在读取缓存文件的逻辑上。
+
+可能是 nacos-client 出了问题
+可能是 Dubbo 的 nacos-registry 出了问题
+一番排查，在 Nacos 研发的协助下，找到了 naocs-client 的一个参数： namingLoadCacheAtStart ，该配置参数控制启动时是否加载缓存文件，默认值为 false。也就是说，使用 nacos-client，默认是不会加载本地缓存文件的。终于定位到线上问题的原因了：需要手动开启加载本地缓存，才能让 Nacos 加载本地缓存文件。
+
+该参数设置为 true 和 false 的利弊：
+
+设置为 true，认为可用性 & 稳定性优先，宁愿接受可能出错的数据，也不能因为没有数据导致调用完全出错
+设置为 false，则认为 Server 的可用性较高，更能够接受没有数据，也不能接受错误的数据
+
 ### Istio
 >Istio 作为 Service Mesh 解决方案事实上的标准，解决了开发人员和运维人员所面临的从单体应用向分布式微服务架构转变的挑战。Istio 提供了对整个服务网格的行为洞察和操作控制的能力，以及一个完整的满足微服务应用各种需求的解决方案
 
@@ -538,7 +561,14 @@ public String callServer(String api, Map<String, String> params, String curServe
 
 ```
 
-### debug主动服务注册
+### debug主动服务
+
+#### 注册调用栈：
+>demo.main->SpringApplication.run->org.springframework.boot.SpringApplication.refreshContext->SpringApplication.refresh->org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh->org.springframework.context.support.AbstractApplicationContext.refresh->org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.finishRefresh->org.springframework.context.support.AbstractApplicationContext.publishEvent(事件机制)->org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent->invokeListener->doInvokeListener->org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.onApplicationEvent->bind->start->com.alibaba.cloud.nacos.registry.NacosAutoServiceRegistration.register(主动nacos注册，调用httpReq[post /nacos/v1/ns/instance])->com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register->com.alibaba.nacos.client.naming.NacosNamingService.registerInstance->reqAPI(post /nacos/v1/ns/instance)
+
+
+
+
 >1，在idea左侧maven：spring-cloud-starter-alibaba-nacos-discovery下NacosServiceRegistry register方法打断点
 >2，debug执行，可以看到一些具体的数据，以便理解
 ### serviceId
@@ -574,7 +604,262 @@ NacosRegistration{nacosDiscoveryProperties=NacosDiscoveryProperties{serverAddr='
 
 ![](nacos-namespace-group-service-cluster-instance.png "")
 
+![](nacos-namespace-group-service-cluster-instance2.png "")
+
 ### 为什么nacos需要负载均衡？
+
+### 服务暴露：绑定自己的TCP port
+
+>本地暴露是暴露在 JVM 中，不需要网络通信；
+>远程暴露是将 ip、端口等信息暴露给远程客户端,调用时需要网络通信。
+>本地暴露服务的时候 url 是以 injvm 开头的，而远程服务是以 registry 开头的
+
+![](dubbo-config-spring-struct.png "")
+![](nacos-dubbo-service-bean-reference.png "")
+
+>1，DubboComponentScanRegistrar作用负责DubboComponentScan包路径下的beandefinition扫描
+负责将扫描到的beanDefinition转换成ServiceBean实例
+具体查看ServiceAnnotationBeanPostProcessor#buildServiceBeanDefinition
+
+
+>dubbo-parent dubbo-config-api ServiceConfig （暴露服务 doExportUrlsFor1Protocol）
+>ServiceBean 继承ServiceConfig ：public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean, DisposableBean,
+        ApplicationContextAware, BeanNameAware, ApplicationEventPublisherAware {}
+
+>**ServiceBean继承体系,它继承了 ApplicationListener.这个就是 spring 的事件机制，spring 容器初始化完成之后就会触发 ServiceBean 的 onApplicationEvent 方法。这个就是整个 dubbo 服务启动的入口了**
+
+![](dubbo-rpc-service-export.png "")
+![](dubbo-netty-server.png "")
+
+>服务暴露从export()方法开始，才真正进入了dubbo的服务暴露流程，在这个过程中就会涉及到多协议暴露服务、注册zk、暴露本地和远程服务，获取invoker，将invoker转化成exporter等一系列操作
+
+* [dubbo服务暴露-源码讲解]](https://www.infoq.cn/article/svypb5g3kaiy5fmdiieu)
+* [和上面一起，就解析了，注册和服务暴露的过程](https://blog.csdn.net/m0_43430744/article/details/108647548)
+
+>总结如上，文字描述：
+>1.DubboComponentScanRegistrar作用负责DubboComponentScan包路径下的beandefinition扫描
+负责将扫描到的beanDefinition转换成ServiceBean实例
+>ServiceBean，通过事件机制，调用serviceConfig相关，例如doExportUrlsFor1Protocol，实现服务注册和服务暴露
+
+### 服务订阅-重点看 
+* [注册订阅和服务暴露的过程-重点看](https://blog.csdn.net/m0_43430744/article/details/108647548)
+  
+AbstractSpringCloudRegistry:
+
+>SpringCloudRegistryFactory通过spring环境获取对应discoveryClient实例
+
+ReferenceBean.createProxy概述
+
+调用RegistryProtocol#doRefer创建本地Invoker实例
+调用org.apache.dubbo.registry.integration.RegistryDirectory#subscribe订阅远程服务
+调用SpringCloudRegistry#subscribeDubboServiceURLs
+调用DubboServiceMetadataRepository#initSubscribedDubboMetadataService
+
+```
+
+protected void initSubscribedDubboMetadataService(String serviceName) {
+    //调用discoveryClient获取实例列表 这里就衔接到了NacosDiscoveryClient
+    this.metadataServiceInstanceSelector.choose(this.discoveryClient.getInstances(serviceName)).map(this::getDubboMetadataServiceURLs).ifPresent((dubboMetadataServiceURLs) -> {
+      dubboMetadataServiceURLs.forEach((dubboMetadataServiceURL) -> {
+        try {
+          this.initSubscribedDubboMetadataServiceURL(dubboMetadataServiceURL);
+          this.initDubboMetadataServiceProxy(dubboMetadataServiceURL);
+        } catch (Throwable var3) {
+          if (this.logger.isErrorEnabled()) {
+            this.logger.error(var3.getMessage(), var3);
+          }
+        }
+
+      });
+    });
+    this.initDubboRestServiceMetadataRepository(serviceName);
+  }
+
+com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery#getInstances：
+public List<ServiceInstance> getInstances(String serviceId) throws NacosException {
+   String group = discoveryProperties.getGroup();
+   //初始化nacos命名服务 并且调用nacos获取实例列表
+   List<Instance> instances = discoveryProperties.namingServiceInstance()
+         .selectInstances(serviceId, group, true);
+   return hostToServiceInstanceList(instances, serviceId);
+}
+
+
+```
+```
+com.alibaba.cloud.dubbo.registry.SpringCloudRegistryFactory#init
+protected void init() {
+   if (initialized || applicationContext == null) {
+      return;
+   }
+   //从spring上下文获取DiscoveryClient实例
+   this.discoveryClient = applicationContext.getBean(DiscoveryClient.class);
+   this.dubboServiceMetadataRepository = applicationContext
+         .getBean(DubboServiceMetadataRepository.class);
+   this.dubboMetadataConfigServiceProxy = applicationContext
+         .getBean(DubboMetadataServiceProxy.class);
+   this.jsonUtils = applicationContext.getBean(JSONUtils.class);
+   this.dubboGenericServiceFactory = applicationContext
+         .getBean(DubboGenericServiceFactory.class);
+}
+
+
+```
+
+>配置文件中dubbo.cloud.subscribed-services写了服务，然后根据serviceName遍历获取nacos上的服务，并使用updateServiceNow基于/instance/list获取实例信息，启用scheduleUpdateIfAbsent调用HostReactor.UpdateTask 去获取实例信息 （调用的是DiscoveryClient）
+```
+AbstractSpringCloudRegistry：
+
+ private void doSubscribeDubboServiceURLs(URL url, NotifyListener listener) {
+    Set<String> subscribedServices = this.repository.getSubscribedServices();
+    subscribedServices.forEach((service) -> {
+      this.subscribeDubboServiceURL(url, listener, service, this::getServiceInstances);
+    });
+  }
+  
+
+public ServiceInfo getServiceInfo(String serviceName, String clusters) {
+    LogUtils.NAMING_LOGGER.debug("failover-mode: " + this.failoverReactor.isFailoverSwitch());
+    String key = ServiceInfo.getKey(serviceName, clusters);
+    if (this.failoverReactor.isFailoverSwitch()) {
+      return this.failoverReactor.getService(key);
+    } else {
+      ServiceInfo serviceObj = this.getServiceInfo0(serviceName, clusters);
+      if (null == serviceObj) {
+        serviceObj = new ServiceInfo(serviceName, clusters);
+        this.serviceInfoMap.put(serviceObj.getKey(), serviceObj);
+        this.updatingMap.put(serviceName, new Object());
+        this.updateServiceNow(serviceName, clusters);
+        this.updatingMap.remove(serviceName);
+      } else if (this.updatingMap.containsKey(serviceName)) {
+        synchronized(serviceObj) {
+          try {
+            serviceObj.wait(5000L);
+          } catch (InterruptedException var8) {
+            LogUtils.NAMING_LOGGER.error("[getServiceInfo] serviceName:" + serviceName + ", clusters:" + clusters, var8);
+          }
+        }
+      }
+
+      this.scheduleUpdateIfAbsent(serviceName, clusters);
+      return (ServiceInfo)this.serviceInfoMap.get(serviceObj.getKey());
+    }
+  }
+  
+  public void updateServiceNow(String serviceName, String clusters) {
+    ServiceInfo oldService = this.getServiceInfo0(serviceName, clusters);
+    boolean var15 = false;
+
+    label121: {
+      try {
+        var15 = true;
+        String result = this.serverProxy.queryList(serviceName, clusters, this.pushReceiver.getUDPPort(), false);
+        if (StringUtils.isNotEmpty(result)) {
+          this.processServiceJSON(result);
+          var15 = false;
+        } else {
+          var15 = false;
+        }
+        break label121;
+      } catch (Exception var19) {
+        LogUtils.NAMING_LOGGER.error("[NA] failed to update serviceName: " + serviceName, var19);
+        var15 = false;
+      } finally {
+        if (var15) {
+          if (oldService != null) {
+            synchronized(oldService) {
+              oldService.notifyAll();
+            }
+          }
+
+        }
+      }
+
+      if (oldService != null) {
+        synchronized(oldService) {
+          oldService.notifyAll();
+        }
+      }
+
+      return;
+    }
+
+    if (oldService != null) {
+      synchronized(oldService) {
+        oldService.notifyAll();
+      }
+    }
+
+  }
+  public String queryList(String serviceName, String clusters, int udpPort, boolean healthyOnly) throws NacosException {
+    Map<String, String> params = new HashMap(8);
+    params.put("namespaceId", this.namespaceId);
+    params.put("serviceName", serviceName);
+    params.put("clusters", clusters);
+    params.put("udpPort", String.valueOf(udpPort));
+    params.put("clientIP", NetUtils.localIP());
+    params.put("healthyOnly", String.valueOf(healthyOnly));
+    return this.reqAPI(UtilAndComs.NACOS_URL_BASE + "/instance/list", params, (String)"GET");
+  }
+  
+    public void scheduleUpdateIfAbsent(String serviceName, String clusters) {
+    if (this.futureMap.get(ServiceInfo.getKey(serviceName, clusters)) == null) {
+      synchronized(this.futureMap) {
+        if (this.futureMap.get(ServiceInfo.getKey(serviceName, clusters)) == null) {
+          ScheduledFuture<?> future = this.addTask(new HostReactor.UpdateTask(serviceName, clusters));
+          this.futureMap.put(ServiceInfo.getKey(serviceName, clusters), future);
+        }
+      }
+    }
+  }
+
+//registry://localhost:9090/org.apache.dubbo.registry.RegistryService?application=main-service&dubbo=2.0.2&pid=24056&qos.enable=false&refer=application%3Dmain-service%26check%3Dfalse%26dubbo%3D2.0.2%26interface%3Dcom.ihuman.recite.api.service.courseService.CourseService%26lazy%3Dfalse%26methods%3DdeleteLessons%2CgetLessonList%2CbatchCreateCDKeys%2CdeleteCourse%2CgetLabelByCourseId%2CgetLesson%2CsearchCourseChannels%2CeditChannel%2CgetCourseSalePage%2CchangeCourseState%2CexpireCDKS%2CcopyLessons%2CgetValidCourse%2CaddCourse%2CgetMyCourse%2CsearchQRCodeHistory%2CcreateChannelQRCode%2CaddLesson%2CgetCourseByCourseId%2CsearchChannels%2CsearchCDKeys%2CsearchCourse%2CgetCoursesByUid%26pid%3D24056%26qos.enable%3Dfalse%26register.ip%3D10.2.100.44%26release%3D2.7.4.1%26revision%3D0.0.34%26side%3Dconsumer%26sticky%3Dfalse%26timeout%3D30000%26timestamp%3D1622181900926&registry=spring-cloud&release=2.7.4.1&timestamp=1622181900962
+
+
+  public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
+    return (Invoker)("registry".equals(url.getProtocol()) ? this.protocol.refer(type, url) : new ListenerInvokerWrapper(this.protocol.refer(type, url), Collections.unmodifiableList(ExtensionLoader.getExtensionLoader(InvokerListener.class).getActivateExtension(url, "invoker.listener"))));
+  }
+
+```
+
+## 总结
+
+### 服务注册
+>注册调用栈：
+```
+
+
+demo.main->SpringApplication.run->org.springframework.boot.SpringApplication.refreshContext->SpringApplication.refresh->org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh->org.springframework.context.support.AbstractApplicationContext.refresh
+->org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.finishRefresh->org.springframework.context.support.AbstractApplicationContext.publishEvent(事件机制)->org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent
+->invokeListener->doInvokeListener->org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration.onApplicationEvent->bind->start->com.alibaba.cloud.nacos.registry.NacosAutoServiceRegistration.register(主动nacos注册，调用httpReq[post /nacos/v1/ns/instance])
+->com.alibaba.cloud.nacos.registry.NacosServiceRegistry.register->com.alibaba.nacos.client.naming.NacosNamingService.registerInstance->reqAPI(post /nacos/v1/ns/instance)
+```
+
+### 服务暴露
+>1.DubboComponentScanRegistrar作用负责DubboComponentScan包路径下的beandefinition扫描
+负责将扫描到的beanDefinition转换成ServiceBean实例
+>2，ServiceBean，通过事件机制，调用serviceConfig相关，例如doExportUrlsFor1Protocol，实现服务注册和服务暴露
+
+
+### 服务订阅
+>配置文件中dubbo.cloud.subscribed-services写了服务，然后根据serviceName遍历获取nacos上的服务，并使用updateServiceNow基于/instance/list获取实例信息，启用scheduleUpdateIfAbsent调用HostReactor.UpdateTask 去获取实例信息 （调用的是DiscoveryClient）
+
+
+### 重要，但是可能有些已经调整
+
+* [dubbo服务暴露-源码讲解]](https://www.infoq.cn/article/svypb5g3kaiy5fmdiieu)
+* [和上面一起，就解析了，注册和服务暴露的过程](https://blog.csdn.net/m0_43430744/article/details/108647548)
+
+
+
+```
+2021-05-28 10:21:53 361 [,] [main] AbstractRegistry.java 280 register INFO  c.a.c.d.r.SpringCloudRegistry -  [DUBBO] Register: consumer://10.2.100.44/com.ihuman.recite.api.service.courseService.CourseService?application=main-service&category=consumers&check=false&dubbo=2.0.2&interface=com.ihuman.recite.api.service.courseService.CourseService&lazy=false&methods=deleteLessons,getLessonList,batchCreateCDKeys,deleteCourse,getLabelByCourseId,getLesson,searchCourseChannels,editChannel,getCourseSalePage,changeCourseState,expireCDKS,copyLessons,getValidCourse,addCourse,getMyCourse,searchQRCodeHistory,createChannelQRCode,addLesson,getCourseByCourseId,searchChannels,searchCDKeys,searchCourse,getCoursesByUid&pid=23816&qos.enable=false&release=2.7.4.1&revision=0.0.34&side=consumer&sticky=false&timeout=30000&timestamp=1622168513239, dubbo version: 2.7.4.1, current host: 10.2.100.44
+2021-05-28 10:21:53 368 [,] [main] AbstractRegistry.java 305 subscribe INFO  c.a.c.d.r.SpringCloudRegistry -  [DUBBO] Subscribe: consumer://10.2.100.44/com.ihuman.recite.api.service.courseService.CourseService?application=main-service&category=providers,configurators,routers&check=false&dubbo=2.0.2&interface=com.ihuman.recite.api.service.courseService.CourseService&lazy=false&methods=deleteLessons,getLessonList,batchCreateCDKeys,deleteCourse,getLabelByCourseId,getLesson,searchCourseChannels,editChannel,getCourseSalePage,changeCourseState,expireCDKS,copyLessons,getValidCourse,addCourse,getMyCourse,searchQRCodeHistory,createChannelQRCode,addLesson,getCourseByCourseId,searchChannels,searchCDKeys,searchCourse,getCoursesByUid&pid=23816&qos.enable=false&release=2.7.4.1&revision=0.0.34&side=consumer&sticky=false&timeout=30000&timestamp=1622168513239, dubbo version: 2.7.4.1, current host: 10.2.100.44
+2021-05-28 10:21:53 375 [,] [main] AbstractSpringCloudRegistry.java 215 subscribeDubboServiceURL INFO  c.a.c.d.r.SpringCloudRegistry - The Dubbo Service URL[ID : consumer://10.2.100.44/com.ihuman.recite.api.service.courseService.CourseService] is being subscribed for service[name : search-service]
+
+```
+
+
 
 
 ## kill 之前先 dump
