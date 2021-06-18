@@ -3,6 +3,10 @@
 ## 备注
 >1，理解ExtensionLoader是理解Dubbo的SPI的基础，也是理解Dubbo扩展机制的基础 参照：[Dubbo SPI机制详解](https://www.jianshu.com/p/a72856c77b6a)
 
+* [重要-定位dubbo中网络问题-涉及netty，内核](https://cloud.tencent.com/developer/news/564066)
+* [重要-Dubbo拥堵的分析](https://blog.51cto.com/nxlhero/2515849)
+
+
 ## 重要链接
 * [dubbo官网文档](http://dubbo.apache.org/zh-cn/docs/user/quick-start.html)
 * [负载均衡算法](https://juejin.im/post/5ee8a2e351882543216f1d9a)
@@ -197,6 +201,21 @@ dubbo-cluster模块|集群管理模块，主要提供负载均衡、容错、路
 
 
 ## nacos
+
+### nacos 2.0
+优点
+客户端不再需要定时发送实例心跳，只需要有一个维持连接可用 keepalive 消息即可。重复 TPS 可以大幅降低。
+TCP 连接断开可以被快速感知到，提升反应速度。
+长连接的流式推送，比 UDP 更加可靠；nio 的机制具有更高的吞吐量，而且由于可靠推送，可以加长客户端用于对账服务列表的时间，甚至删除相关的请求。重复的无效 QPS 可以大幅降低。
+长连接避免频繁连接开销，可以大幅缓解 TIME_ WAIT 问题。
+真实的长连接，解决配置模块 GC 问题。
+更细粒度的同步内容，减少服务节点间的通信压力。
+缺点
+没有银弹的方案，新架构也会引入一些新问题：
+
+内部结构复杂度上升，管理连接状态，连接的负载均衡需要管理。
+数据又原来的无状态，变为与连接绑定的有状态数据，流程链路更长。
+RPC 协议的观测性不如 HTTP。即使 gRPC 基于 HTTP2.0Stream 实现，仍然不如直接使用 HTTP 协议来的直观。
 
 ![](nacos-framework.jpeg "nacos架构")
 
@@ -860,7 +879,25 @@ demo.main->SpringApplication.run->org.springframework.boot.SpringApplication.ref
 ```
 
 
+## dubbo启用服务瞬间出现超时调用
+>几乎同一时间来建立tcp连接
+如果怀疑tcp连接队列溢出，可以使用以下命令确认：
 
+netstat -s | egrep "listen|LISTEN" 
+
+>最直观的做法就是调整tcp的半连接队列和全连接队列
+全连接队列的大小取决于：min(backlog, somaxconn) 。 backlog是在socket创建的时候传入的，somaxconn是一个os级别的系统参数。
+半连接队列的大小取决于：max(64, /proc/sys/net/ipv4/tcp_max_syn_backlog)。
+其中值得注意的是，在jdk中，backlog默认的设置的为50。
+对于backlog参数，仅修改系统参数是不起作用的，需要将创建ServerSocket是传入的backlog参数一同修改
+
+初步猜测是 syn queue 满了，通过 netstat -s 查看队列的情况
+
+### lazy 连接
+当客户端与服务端创建代理时，暂不建立 tcp长连接，当有数据请求时再做连接初始化。
+
+* [重要-定位dubbo中网络问题-涉及netty，内核](https://cloud.tencent.com/developer/news/564066)
+* [重要-Dubbo拥堵的分析](https://blog.51cto.com/nxlhero/2515849)
 
 ## kill 之前先 dump
 ``` 
