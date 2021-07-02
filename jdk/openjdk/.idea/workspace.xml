@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="21bc933e-e187-4023-9dd7-4bddeca4f2c7" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../java基础/dubbo-nacos.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../java基础/dubbo-nacos.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/FutureTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/FutureTask.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +18,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ThreadPoolExecutor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="550">
-              <caret line="1064" column="21" lean-forward="true" selection-start-line="1064" selection-start-column="21" selection-end-line="1064" selection-end-column="21" />
+            <state relative-caret-position="27189">
+              <caret line="1064" column="21" selection-start-line="1064" selection-start-column="21" selection-end-line="1064" selection-end-column="21" />
               <folding>
                 <element signature="e#18645#18646#0" expanded="true" />
                 <element signature="e#18680#18681#0" expanded="true" />
@@ -37,7 +37,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/Executor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
+            <state relative-caret-position="2538">
               <caret line="127" column="17" selection-start-line="127" selection-start-column="17" selection-end-line="127" selection-end-column="17" />
               <folding>
                 <element signature="e#0#4960#0" expanded="true" />
@@ -49,7 +49,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/Executors.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
+            <state relative-caret-position="4671">
               <caret line="214" column="34" selection-start-line="214" selection-start-column="34" selection-end-line="214" selection-end-column="34" />
               <folding>
                 <element signature="e#0#32431#0" expanded="true" />
@@ -62,11 +62,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/LinkedBlockingQueue.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="280">
-              <caret line="372" column="29" lean-forward="true" selection-start-line="372" selection-start-column="29" selection-end-line="372" selection-end-column="29" />
+              <caret line="372" column="29" selection-start-line="372" selection-start-column="29" selection-end-line="372" selection-end-column="29" />
               <folding>
                 <element signature="e#8995#8996#0" expanded="true" />
                 <element signature="e#9034#9035#0" expanded="true" />
@@ -78,7 +78,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ExecutorService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="624">
+            <state relative-caret-position="5427">
               <caret line="235" column="18" selection-start-line="235" selection-start-column="18" selection-end-line="235" selection-end-column="18" />
               <folding>
                 <element signature="e#0#16141#0" expanded="true" />
@@ -87,11 +87,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/FutureTask.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="407" column="33" lean-forward="true" selection-start-line="407" selection-start-column="33" selection-end-line="407" selection-end-column="33" />
+            <state relative-caret-position="236">
+              <caret line="428" column="45" selection-start-line="428" selection-start-column="45" selection-end-line="428" selection-end-column="45" />
               <folding>
                 <element signature="e#6534#6535#0" expanded="true" />
                 <element signature="e#6575#6576#0" expanded="true" />
@@ -135,8 +135,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ConcurrentHashMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="1017" column="18" lean-forward="true" selection-start-line="1017" selection-start-column="18" selection-end-line="1017" selection-end-column="18" />
+            <state relative-caret-position="25299">
+              <caret line="1017" column="18" selection-start-line="1017" selection-start-column="18" selection-end-line="1017" selection-end-column="18" />
               <folding>
                 <element signature="e#0#264462#0" expanded="true" />
                 <element signature="e#40306#40307#0" expanded="true" />
@@ -176,7 +176,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>doSignal</find>
       <find>setExclusiveOwnerThread</find>
       <find>getAndAddInt</find>
       <find>getAndSetInt</find>
@@ -199,13 +198,14 @@
       <find>tryAcquireNanos</find>
       <find>getTask</find>
       <find>outcome</find>
-      <find>waiters</find>
       <find>NORMAL</find>
       <find>termination</find>
       <find>allowCoreThreadTimeOut</find>
       <find>writeObject</find>
       <find>serialPersistentFields</find>
       <find>Segment</find>
+      <find>stateOffset</find>
+      <find>waiters</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -216,13 +216,13 @@
       <list>
         <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/atomic/AtomicIntegerArray.java" />
         <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/StampedLock.java" />
-        <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/FutureTask.java" />
         <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/AbstractQueuedSynchronizer.java" />
         <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/ReentrantReadWriteLock.java" />
         <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/LinkedBlockingQueue.java" />
         <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/PriorityBlockingQueue.java" />
         <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/HashMap.java" />
         <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ThreadPoolExecutor.java" />
+        <option value="$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/FutureTask.java" />
       </list>
     </option>
   </component>
@@ -336,8 +336,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -401,18 +401,19 @@
       <workItem from="1621564935803" duration="1683000" />
       <workItem from="1621913881661" duration="573000" />
       <workItem from="1622627627138" duration="2579000" />
+      <workItem from="1625207149978" duration="3002000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="194099000" />
+    <option name="totallyTimeSpent" value="197101000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1921" y="1" width="1918" height="1078" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.44084507" visible="true" weight="0.3326157" />
-      <window_info active="true" id="Structure" order="1" sideWeight="0.5591549" side_tool="true" visible="true" weight="0.3326157" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4394366" visible="true" weight="0.3363832" />
+      <window_info active="true" id="Structure" order="1" sideWeight="0.5605634" side_tool="true" visible="true" weight="0.3363832" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Capture Tool" order="4" />
@@ -891,6 +892,57 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ThreadPoolExecutor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="27189">
+          <caret line="1064" column="21" selection-start-line="1064" selection-start-column="21" selection-end-line="1064" selection-end-column="21" />
+          <folding>
+            <element signature="e#18645#18646#0" expanded="true" />
+            <element signature="e#18680#18681#0" expanded="true" />
+            <element signature="e#18825#18826#0" expanded="true" />
+            <element signature="e#18885#18886#0" expanded="true" />
+            <element signature="e#19030#19031#0" expanded="true" />
+            <element signature="e#19090#19091#0" expanded="true" />
+            <element signature="e#19337#19338#0" expanded="true" />
+            <element signature="e#19410#19411#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/Executor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2538">
+          <caret line="127" column="17" selection-start-line="127" selection-start-column="17" selection-end-line="127" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#4960#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/Executors.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4671">
+          <caret line="214" column="34" selection-start-line="214" selection-start-column="34" selection-end-line="214" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#32431#0" expanded="true" />
+            <element signature="e#16427#16428#0" expanded="true" />
+            <element signature="e#16476#16477#0" expanded="true" />
+            <element signature="e#18290#18291#0" expanded="true" />
+            <element signature="e#18342#18343#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ExecutorService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5427">
+          <caret line="235" column="18" selection-start-line="235" selection-start-column="18" selection-end-line="235" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#16141#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/locks/ReentrantReadWriteLock.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6426">
@@ -917,6 +969,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ConcurrentHashMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25299">
+          <caret line="1017" column="18" selection-start-line="1017" selection-start-column="18" selection-end-line="1017" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#264462#0" expanded="true" />
+            <element signature="e#40306#40307#0" expanded="true" />
+            <element signature="e#40358#40359#0" expanded="true" />
+            <element signature="e#45559#45560#0" expanded="true" />
+            <element signature="e#45607#45608#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/lang/Thread.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="38502">
@@ -939,91 +1005,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ConcurrentHashMap.java">
+    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/LinkedBlockingQueue.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="1017" column="18" lean-forward="true" selection-start-line="1017" selection-start-column="18" selection-end-line="1017" selection-end-column="18" />
+        <state relative-caret-position="280">
+          <caret line="372" column="29" selection-start-line="372" selection-start-column="29" selection-end-line="372" selection-end-column="29" />
           <folding>
-            <element signature="e#0#264462#0" expanded="true" />
-            <element signature="e#40306#40307#0" expanded="true" />
-            <element signature="e#40358#40359#0" expanded="true" />
-            <element signature="e#45559#45560#0" expanded="true" />
-            <element signature="e#45607#45608#0" expanded="true" />
+            <element signature="e#8995#8996#0" expanded="true" />
+            <element signature="e#9034#9035#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/FutureTask.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="407" column="33" lean-forward="true" selection-start-line="407" selection-start-column="33" selection-end-line="407" selection-end-column="33" />
+        <state relative-caret-position="236">
+          <caret line="428" column="45" selection-start-line="428" selection-start-column="45" selection-end-line="428" selection-end-column="45" />
           <folding>
             <element signature="e#6534#6535#0" expanded="true" />
             <element signature="e#6575#6576#0" expanded="true" />
             <element signature="e#6606#6607#0" expanded="true" />
             <element signature="e#6641#6642#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/Executor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="127" column="17" selection-start-line="127" selection-start-column="17" selection-end-line="127" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#4960#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ExecutorService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="624">
-          <caret line="235" column="18" selection-start-line="235" selection-start-column="18" selection-end-line="235" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#16141#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/Executors.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="214" column="34" selection-start-line="214" selection-start-column="34" selection-end-line="214" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#32431#0" expanded="true" />
-            <element signature="e#16427#16428#0" expanded="true" />
-            <element signature="e#16476#16477#0" expanded="true" />
-            <element signature="e#18290#18291#0" expanded="true" />
-            <element signature="e#18342#18343#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/ThreadPoolExecutor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="1064" column="21" lean-forward="true" selection-start-line="1064" selection-start-column="21" selection-end-line="1064" selection-end-column="21" />
-          <folding>
-            <element signature="e#18645#18646#0" expanded="true" />
-            <element signature="e#18680#18681#0" expanded="true" />
-            <element signature="e#18825#18826#0" expanded="true" />
-            <element signature="e#18885#18886#0" expanded="true" />
-            <element signature="e#19030#19031#0" expanded="true" />
-            <element signature="e#19090#19091#0" expanded="true" />
-            <element signature="e#19337#19338#0" expanded="true" />
-            <element signature="e#19410#19411#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jdk/src/share/classes/java/util/concurrent/LinkedBlockingQueue.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="372" column="29" lean-forward="true" selection-start-line="372" selection-start-column="29" selection-end-line="372" selection-end-column="29" />
-          <folding>
-            <element signature="e#8995#8996#0" expanded="true" />
-            <element signature="e#9034#9035#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -227,10 +227,11 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * @param v the value
      */
     protected void set(V v) {
+    	//在task线程中设置得到的运行结果，修改线程状态，new--》completing   https://www.pdai.tech/md/java/thread/java-thread-x-juc-executor-FutureTask.html
         if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
             outcome = v;
-            UNSAFE.putOrderedInt(this, stateOffset, NORMAL); // final state
-            finishCompletion();
+            UNSAFE.putOrderedInt(this, stateOffset, NORMAL); // final state ，线程运行正常，得到结果
+            finishCompletion();//执行完毕，唤醒等待线程
         }
     }
 
@@ -393,25 +394,39 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * @param nanos time to wait, if timed
      * @return state upon completion
      */
-    private int awaitDone(boolean timed, long nanos)
+	/**
+	 * 链接：https://www.pdai.tech/md/java/thread/java-thread-x-juc-executor-FutureTask.html
+	 *
+	 * 如果当前状态为结束状态(state>COMPLETING),则根据需要置空等待节点的线程，并返回 Future 状态；
+	 * 如果当前状态为正在完成(COMPLETING)，说明此时 Future 还不能做出超时动作，为任务让出CPU执行时间片；
+	 * 如果state为NEW，先新建一个WaitNode，然后CAS修改当前waiters；
+	 * 如果等待超时，则调用removeWaiter移除等待节点，返回任务状态；
+	 * 如果设置了超时时间但是尚未超时，则park阻塞当前线程；
+	 * 其他情况直接阻塞当前线程
+	 * @param timed
+	 * @param nanos
+	 * @return
+	 * @throws InterruptedException
+	 */
+	private int awaitDone(boolean timed, long nanos)
         throws InterruptedException {
         final long deadline = timed ? System.nanoTime() + nanos : 0L;
         WaitNode q = null;
         boolean queued = false;
-        for (;;) {
+        for (;;) {//自旋
             if (Thread.interrupted()) {
                 removeWaiter(q);
                 throw new InterruptedException();
             }
 
             int s = state;
-            if (s > COMPLETING) {
+            if (s > COMPLETING) {//NORMAL，这个返回线程状态，之后get 就能
                 if (q != null)
                     q.thread = null;
                 return s;
             }
             else if (s == COMPLETING) // cannot time out yet
-                Thread.yield();
+                Thread.yield();//让出CPU，变成就绪状态
             else if (q == null)
                 q = new WaitNode();
             else if (!queued)
