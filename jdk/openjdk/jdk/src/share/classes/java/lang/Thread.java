@@ -139,12 +139,30 @@ import sun.security.util.SecurityConstants;
  */
 public
 class Thread implements Runnable {
+  /**
+   * 新创建的线程启动调用native start0方法，而这些native方法的注册是在Thread对象初始化的时候完成的
+   */
     /* Make sure registerNatives is the first thing <clinit> does. */
     private static native void registerNatives();
     static {
         registerNatives();
     }
 
+  /**
+   * 一个 Java 线程的创建本质上就对应了一个本地线程（native thread）的创建，两者是一一对应的
+   * 操作系统实现线程有三种方式：
+   *
+   * 内核线程实现
+   * 用户线程实现
+   * 用户线程加轻量级进程混合实现
+   *
+   *Java线程在JDK1.2之前，是基于用户线程实现的。而在JDK1.2中，线程模型替换为基于操作系统原生线程模型来实现。
+   *
+   * 而在目前的JDK版本中，操作系统支持怎样的线程模型，在很大程度上决定了Java虚拟机的线程是怎样映射的，这点在不同的平台上没法达成一致。
+   *
+   * 对于Sun JDK来说，它的Windows版本和Linux版本都是使用一对一的线程模型实现的，一条Java线程映射到一条轻量级进程之中
+   *
+   */
     private volatile char  name[];
     private int            priority;
     private Thread         threadQ;

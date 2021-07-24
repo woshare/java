@@ -2942,7 +2942,7 @@ static void thread_entry(JavaThread* thread, TRAPS) {
   JavaCalls::call_virtual(&result,
                           obj,
                           KlassHandle(THREAD, SystemDictionary::Thread_klass()),
-                          vmSymbols::run_method_name(),
+                          vmSymbols::run_method_name(), //thread start->start0->thread run->target.run
                           vmSymbols::void_method_signature(),
                           THREAD);
 }
