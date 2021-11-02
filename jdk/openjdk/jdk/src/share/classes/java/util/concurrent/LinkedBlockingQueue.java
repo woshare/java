@@ -407,7 +407,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             putLock.unlock();
         }
-        if (c == 0)
+        if (c == 0)// c = count.getAndIncrement(); 是先get再自增的，此时为0实际为1了
             signalNotEmpty();
         return true;
     }

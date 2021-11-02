@@ -440,8 +440,8 @@ public class FutureTask<V> implements RunnableFuture<V> {
                 }
                 LockSupport.parkNanos(this, nanos);
             }
-            else
-                LockSupport.park(this);
+            else//参照run->set -->finishCompletion->unpark
+                LockSupport.park(this);//当线程还没执行完，则调用get会在这里阻塞，当run中执行完，会要set Result，会修改stat的状态并unpark唤醒此处，则get就会得到结果了
         }
     }
 

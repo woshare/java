@@ -260,7 +260,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
                 } else {
                     long delay = first.getDelay(NANOSECONDS);
                     if (delay <= 0)
-                        return q.poll();
+                        return q.poll(); //堆顶元素的延迟时长<=0 ，则出队列
                     if (nanos <= 0)
                         return null;
                     first = null; // don't retain ref while waiting

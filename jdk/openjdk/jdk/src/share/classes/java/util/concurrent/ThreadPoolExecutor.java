@@ -660,7 +660,11 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             return getState() != 0;
         }
 
-        protected boolean tryAcquire(int unused) {
+        //当前线程在执行任务期间是lock，run，unlock的
+        //不可重入，则确保了当前线程只有一个任务在执行中，一个一个任务getTask，并执行
+        //则就是为什么worker是继承的AQS
+        //从lock来看，worker实现了一个公平的不可重入锁
+        protected boolean tryAcquire(int unused) {//不可重入的特性去反应线程现在的执行状态
             if (compareAndSetState(0, 1)) {
                 setExclusiveOwnerThread(Thread.currentThread());
                 return true;
@@ -993,7 +997,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                 } finally {
                     mainLock.unlock();
                 }
-                if (workerAdded) {
+                if (workerAdded) {//和FutureTask进行了关联，AbstractExecutorService.submit{futureTask,execute}->execute->thread.start->worker.run->runWork->task.run->futureTask.run->futureTask.call->selfDefineTask.run
                     t.start();//645行解释了线程和worker.run的关系。这个地方执行了线程，worker->run()->runWorker()->{beforeExecute();task.run();afterExecute();}
                     workerStarted = true;
                 }
@@ -1089,7 +1093,11 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         for (;;) {
             int c = ctl.get();
             int rs = runStateOf(c);
-
+            //RUNNING=1110 0000  0000 0000  0000 0000  0000 0000
+            //SHUTDOWN=0000 0000  0000 0000  0000 0000  0000 0000
+            //STOP=0010 0000  0000 0000  0000 0000  0000 0000
+            //TIDYING=0100 0000  0000 0000  0000 0000  0000 0000
+            //TERMINATED=0110 0000  0000 0000  0000 0000  0000 0000
             // Check if queue empty only if necessary.
             if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
                 decrementWorkerCount();
@@ -1108,7 +1116,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                 continue;
             }
 
-            try {
+            try {//基于阻塞队列，来实现对任务写入和获取，在满或空的时候，阻塞线程池，而不需要线程池本身去实现，阻塞通知机制了
                 Runnable r = timed ?
                     workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
                     workQueue.take();
@@ -1168,7 +1176,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         Thread wt = Thread.currentThread();
         Runnable task = w.firstTask;
         w.firstTask = null;
-        w.unlock(); // allow interrupts
+        w.unlock(); // allow interrupts   初始stat设置为-1，说是为了不允许interrupt，现在-1改为0，就可以interrupt
         boolean completedAbruptly = true;
         try {
             while (task != null || (task = getTask()) != null) {

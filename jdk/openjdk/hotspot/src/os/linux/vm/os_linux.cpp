@@ -5865,7 +5865,7 @@ void Parker::park(bool isAbsolute, jlong time) {
   // Return immediately if a permit is available.
   // We depend on Atomic::xchg() having full barrier semantics
   // since we are doing a lock-free update to _counter.
-  if (Atomic::xchg(0, &_counter) > 0) return;
+  if (Atomic::xchg(0, &_counter) > 0) return;//先尝试能否直接拿到“许可”，即_counter>0时，如果成功，则把_counter设置为0，并返回
 
   Thread* thread = Thread::current();
   assert(thread->is_Java_thread(), "Must be JavaThread");
@@ -5900,11 +5900,15 @@ void Parker::park(bool isAbsolute, jlong time) {
   if (Thread::is_interrupted(thread, false) || pthread_mutex_trylock(_mutex) != 0) {
     return;
   }
+  //pthread_mutex_trylock() 是 pthread_mutex_lock() 的非阻塞版本
+  //如果 mutex 所引用的互斥对象当前被任何线程（包括当前线程）锁定，则将立即返回该调用。否则，该互斥锁将处于锁定状态，调用线程是其属主。
+
+    //返回值：pthread_mutex_trylock() 在成功完成之后会返回零。其他任何返回值都表示出现了错误
 
   int status ;
   if (_counter > 0)  { // no wait needed
     _counter = 0;
-    status = pthread_mutex_unlock(_mutex);
+    status = pthread_mutex_unlock(_mutex);// 可释放 mutex 引用的互斥锁对象,在成功完成之后会返回零
     assert (status == 0, "invariant") ;
     // Paranoia to ensure our locked and lock-free paths interact
     // correctly with each other and Java-level accesses.
@@ -5927,7 +5931,7 @@ void Parker::park(bool isAbsolute, jlong time) {
   assert(_cur_index == -1, "invariant");
   if (time == 0) {
     _cur_index = REL_INDEX; // arbitrary choice when not timed
-    status = pthread_cond_wait (&_cond[_cur_index], _mutex) ;
+    status = pthread_cond_wait (&_cond[_cur_index], _mutex) ;//应该是阻塞在这个地方
   } else {
     _cur_index = isAbsolute ? ABS_INDEX : REL_INDEX;
     status = os::Linux::safe_cond_timedwait (&_cond[_cur_index], _mutex, &absTime) ;
@@ -5960,7 +5964,7 @@ void Parker::park(bool isAbsolute, jlong time) {
 
 void Parker::unpark() {
   int s, status ;
-  status = pthread_mutex_lock(_mutex);
+  status = pthread_mutex_lock(_mutex);//该互斥锁已被锁定。调用线程是该互斥锁的属主。如果该互斥锁已被另一个线程锁定和拥有，则调用线程将阻塞，直到该互斥锁变为可用为止。
   assert (status == 0, "invariant") ;
   s = _counter;
   _counter = 1;

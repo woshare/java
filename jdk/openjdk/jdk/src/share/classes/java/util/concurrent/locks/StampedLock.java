@@ -288,11 +288,11 @@ public class StampedLock implements java.io.Serializable {//乐观读写锁
 
     // Values for lock state and stamp operations
     private static final long RUNIT = 1L;
-    private static final long WBIT  = 1L << LG_READERS;
-    private static final long RBITS = WBIT - 1L;
+    private static final long WBIT  = 1L << LG_READERS;//第8位表示写锁，不可重入
+    private static final long RBITS = WBIT - 1L; //低7位表示读锁
     private static final long RFULL = RBITS - 1L;
     private static final long ABITS = RBITS | WBIT;
-    private static final long SBITS = ~RBITS; // note overlap with ABITS
+    private static final long SBITS = ~RBITS; // note overlap with ABITS SBITS=1111 1111 1111 1111 1111 1111 1000 0000
 
     // Initial value for lock state; avoid failure value zero
     private static final long ORIGIN = WBIT << 1;
@@ -339,7 +339,7 @@ public class StampedLock implements java.io.Serializable {//乐观读写锁
      */
     public StampedLock() {
         state = ORIGIN;
-    }
+    }//ORIGIN =0000 0000 0000 0000 0000 0001 0000 0000
 
     /**
      * Exclusively acquires the lock, blocking if necessary
@@ -529,6 +529,11 @@ public class StampedLock implements java.io.Serializable {//乐观读写锁
         U.loadFence();//在校验逻辑之前，会通过Unsafe的loadFence方法加入一个load内存屏障，目的是避免如下用例中步骤2,3和StampedLock.validate中锁状态校验运算发生重排序导致锁状态校验不准确的问题。
         return (stamp & SBITS) == (state & SBITS);
     }
+    // 第8位写锁标识，低7位为读锁
+    // 初始 state=ORIGIN =0000 0000 0000 0000 0000 0001 0000 0000 ，是为了避免failed的state=0
+    // tryOptimisticRead() 获得乐观读锁之后 stamp=state=0000 0000 0000 0000 0000 0001 0000 0000
+    // 如果有写锁，说明对数据有修改，获取写锁，是在第8位置位1。则 此时 state=0000 0000 0000 0000 0000 0001 1000 0000
+    //在做validate stamp  0000 0000 0000 0000 0000 0001 0000 0000 & SBITS=1111 1111 1111 1111 1111 1111 1000 0000 ！= state & SBITS
     /**
      *  public double distanceFromOrigin() {
      *         long stamp = stampedLock.tryOptimisticRead(); // 获得一个乐观读锁

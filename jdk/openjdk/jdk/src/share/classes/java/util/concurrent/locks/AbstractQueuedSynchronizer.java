@@ -880,7 +880,7 @@ public abstract class AbstractQueuedSynchronizer
                     return interrupted;
                 }
                 if (shouldParkAfterFailedAcquire(p, node) &&
-                    parkAndCheckInterrupt())
+                    parkAndCheckInterrupt()) //park and interrupt
                     interrupted = true;//当前线程休眠
             }
         } finally {
@@ -1274,7 +1274,7 @@ public abstract class AbstractQueuedSynchronizer
     public final boolean release(int arg) {
         if (tryRelease(arg)) {
             Node h = head;
-            if (h != null && h.waitStatus != 0)
+            if (h != null && h.waitStatus != 0) //为什么不能是0，condition下signal，从CONDITION=1设置成0，有设置成SIGNAL
                 unparkSuccessor(h);//唤醒头结点的后继节点
             return true;
         }
@@ -1697,7 +1697,7 @@ public abstract class AbstractQueuedSynchronizer
         Node p = enq(node);
         int ws = p.waitStatus;
         if (ws > 0 || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))
-            LockSupport.unpark(node.thread);
+            LockSupport.unpark(node.thread);  //唤醒await中park的地方
         return true;
     }
 
@@ -1870,7 +1870,7 @@ public abstract class AbstractQueuedSynchronizer
             if (t == null)
                 firstWaiter = node;
             else
-                t.nextWaiter = node;
+                t.nextWaiter = node;//加入到等待队列队尾
             lastWaiter = node;
             return node;
         }
@@ -2050,11 +2050,11 @@ public abstract class AbstractQueuedSynchronizer
             int savedState = fullyRelease(node);
             int interruptMode = 0;
             while (!isOnSyncQueue(node)) {
-                LockSupport.park(this);
+                LockSupport.park(this); // 把锁全部释放之后，暂定线程，unpark之后，又回到这里
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
                     break;
             }
-            if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
+            if (acquireQueued(node, savedState) && interruptMode != THROW_IE)//unpark 唤醒回到上面park处，之后又把全部释放的锁拿到
                 interruptMode = REINTERRUPT;
             if (node.nextWaiter != null) // clean up if cancelled
                 unlinkCancelledWaiters();

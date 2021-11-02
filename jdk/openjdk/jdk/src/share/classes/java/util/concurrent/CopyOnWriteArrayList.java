@@ -389,7 +389,8 @@ public class CopyOnWriteArrayList<E>
 
     /**
      * {@inheritDoc}
-     *
+     *CopyOnWrite指在“写”的时候，不是直接“写”源数据，而是把数据拷贝一份进行修改，
+     * 再通过悲观锁或者乐观锁的方式写回。那为什么不直接修改，而是要拷贝一份修改呢？这是为了在“读”的时候不加锁
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     public E get(int index) {
