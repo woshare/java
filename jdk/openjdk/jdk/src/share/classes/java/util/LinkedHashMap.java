@@ -252,6 +252,7 @@ public class LinkedHashMap<K,V>
         head = tail = null;
     }
 
+    //这个函数覆写了父类hashmap的方法，在hashmap结构的基础之上，还构造了一个链表关系
     Node<K,V> newNode(int hash, K key, V value, Node<K,V> e) {
         LinkedHashMap.Entry<K,V> p =
             new LinkedHashMap.Entry<K,V>(hash, key, value, e);

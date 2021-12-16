@@ -780,7 +780,7 @@ class JavaThread: public Thread {
   friend class VMStructs;
  private:
   JavaThread*    _next;                          // The next thread in the Threads list
-  oop            _threadObj;                     // The Java level thread object
+  oop            _threadObj;                     // The Java level thread object,指向java.lang.Thread的对象指针，java.lang.Thread指针有一个eetop字段是指向JavaThread的指针
 
 #ifdef ASSERT
  private:
@@ -1330,6 +1330,12 @@ class JavaThread: public Thread {
                               StackYellowPages +
                               StackRedPages) * os::vm_page_size());
   }
+  /*
+  define_pd_global(intx, StackYellowPages,         6);
+  define_pd_global(intx, StackRedPages,            1);
+  define_pd_global(intx, StackShadowPages,         6 DEBUG_ONLY(+2));
+  #define define_pd_global(type, name, value) const type pd_##name = value;
+  */
 
   // Misc. accessors/mutators
   void set_do_not_unlock(void)                   { _do_not_unlock_if_synchronized = true; }

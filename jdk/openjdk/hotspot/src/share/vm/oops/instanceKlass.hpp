@@ -167,13 +167,14 @@ class InstanceKlass: public Klass {
 
   // See "The Java Virtual Machine Specification" section 2.16.2-5 for a detailed description
   // of the class loading & initialization procedure, and the use of the states.
+  //当前类的状态
   enum ClassState {
-    allocated,                          // allocated (but not yet linked)
-    loaded,                             // loaded and inserted in class hierarchy (but not linked yet)
-    linked,                             // successfully linked/verified (but not initialized yet)
-    being_initialized,                  // currently running class initializer
-    fully_initialized,                  // initialized (successfull final state)
-    initialization_error                // error happened during initialization
+    allocated,  //已分配                        // allocated (but not yet linked)
+    loaded,     //已加载，并添加到类的继承体系中                        // loaded and inserted in class hierarchy (but not linked yet)
+    linked,     //链接，验证完成                        // successfully linked/verified (but not initialized yet)
+    being_initialized,          //开始初始化        // currently running class initializer
+    fully_initialized,          //初始化完成       // initialized (successfull final state)
+    initialization_error        //初始化失败        // error happened during initialization
   };
 
   static int number_of_instance_classes() { return _total_instanceKlass_count; }

@@ -1180,7 +1180,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         boolean completedAbruptly = true;
         try {
             while (task != null || (task = getTask()) != null) {
-                w.lock();
+                w.lock();//这是在一个线程里，其实不加lock也不会有多线程不安全问题，此处lock更多的是标注这个线程正在执行task,调用trylock判断是不是空闲线程
                 // If pool is stopping, ensure thread is interrupted;
                 // if not, ensure thread is not interrupted.  This
                 // requires a recheck in second case to deal with

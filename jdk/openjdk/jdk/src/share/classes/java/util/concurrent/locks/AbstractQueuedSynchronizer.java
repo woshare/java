@@ -811,7 +811,7 @@ public abstract class AbstractQueuedSynchronizer
              * to signal it, so it can safely park.
              */
             return true;
-        if (ws > 0) {
+        if (ws > 0) {//canceled=1
             /*
              * Predecessor was cancelled. Skip over predecessors and
              * indicate retry.
@@ -2046,8 +2046,8 @@ public abstract class AbstractQueuedSynchronizer
         public final void await() throws InterruptedException {
             if (Thread.interrupted())
                 throw new InterruptedException();
-            Node node = addConditionWaiter();
-            int savedState = fullyRelease(node);
+            Node node = addConditionWaiter();//加入到condition队列中
+            int savedState = fullyRelease(node);//释放所有的锁
             int interruptMode = 0;
             while (!isOnSyncQueue(node)) {
                 LockSupport.park(this); // 把锁全部释放之后，暂定线程，unpark之后，又回到这里

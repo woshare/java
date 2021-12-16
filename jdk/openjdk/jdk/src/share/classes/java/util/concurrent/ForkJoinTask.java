@@ -386,7 +386,7 @@ public abstract class ForkJoinTask<V> implements Future<V>, Serializable {
         return (s = status) < 0 ? s :
             ((t = Thread.currentThread()) instanceof ForkJoinWorkerThread) ?
             (w = (wt = (ForkJoinWorkerThread)t).workQueue).
-            tryUnpush(this) && (s = doExec()) < 0 ? s :
+            tryUnpush(this) && (s = doExec()) < 0 ? s :         //doExec任务执行
             wt.pool.awaitJoin(w, this, 0L) :
             externalAwaitDone();
     }

@@ -331,7 +331,7 @@ public class ScheduledThreadPoolExecutor
                 remove(task))
                 task.cancel(false);
             else
-                ensurePrestart();
+                ensurePrestart();//ThreadPoolExecutor.ensurePrestart->addWorker ,以及worker getTask，会调用DelayedWorkQueue.take or poll
         }
     }
 
@@ -1017,7 +1017,7 @@ public class ScheduledThreadPoolExecutor
                     queue[0] = e;
                     setIndex(e, 0);
                 } else {
-                    siftUp(i, e);
+                    siftUp(i, e); //写入任务的时候，会排序，查看ScheduledFutureTask.compareTo,时间小的在前面
                 }
                 if (queue[0] == e) {
                     leader = null;

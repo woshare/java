@@ -975,7 +975,7 @@ public final class Unsafe {
      * destroyed. Nothing special is usually required to ensure this
      * when called from Java (in which there will ordinarily be a live
      * reference to the thread) but this is not nearly-automatically
-     * so when calling from native code.
+     * so when calling from native code.compareAndSwapInt
      * @param thread the thread to unpark.
      *
      */

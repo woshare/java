@@ -272,7 +272,7 @@ public class FutureTask<V> implements RunnableFuture<V> {
                     setException(ex);
                 }
                 if (ran)
-                    set(result);
+                    set(result);//在task线程中设置得到的运行结果，修改线程状态,new--》completing->normal ,唤醒等待线程，例如在其他线程调用get的时候，会被park
             }
         } finally {
             // runner must be non-null until state is settled to

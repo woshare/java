@@ -233,3 +233,254 @@ ps:执行1.1,1.2，再执行2.1，是看不到1.2的操作的，只有再执行1
 ## resultSetHandle
 
 > DefaultObjectFactory 这个会根据mapper returnType，创建出对象，
+
+
+## 缓存：两级
+
+>1，每个SqlSession中持有了Executor，每个Executor中有一个LocalCache，存储了一级缓存数据，且还区分SESSION（会话），STATMENT（sql语句级，如果配置缓存作用域localCacheScope是STATEMENT则会每次清空缓存）   
+>2，使用一级缓存的时候作用在同一个SqlSession下，因为缓存不能跨会话共享，不同的会话之间对于相同的数据可能有不一样的缓存。当在有多个会话或者分布式环境下，可能会存在脏数据的问题。那这种问题如何解决呢？可以将一级缓存级别设置为Statement的级别    
+>3，由于二级缓存是从MappedStatement中获取，是存在于全局配置，如果被多个CachingExecutor获取到，则一定会出现线程安全问题导致脏读，所以MyBatis为解决这个问题，在查询的过程中提供了TransactionalCacheManager作为事务缓存管理器   
+>4，二级缓存构建在一级缓存之上，一级缓存是和SqlSession绑定，而二级缓存是和Mapper具体的命名空间绑定，二级缓存是全局性的，一个Mapper中有一个Cache，相同的Mapper中多个不同的MappedStatement共用一个Cache      
+>5，二级缓存-》一级缓存-》数据库：CachingExecutor#query()       
+>6，一级缓存，在同一的sqlSession作用范围下，如果中间操作sqlSession执行了commit操作，其实也就是（删除，更新，新增）那么会清除sqlSession的缓存，保障缓存中拿到的数据一定是最新的，避免脏读。但是是局限在同一sqlSession下，当sqlSession2更新了数据，sqlSession1就可能还会是脏读  
+>7，二级缓存是基于namespace的，在相同的namespace下不同的sqlSession更新数据库并提交事务之后，sqlSession1会导致sqlSession2刷新二级缓存，sqlSession不会存在脏读问题，但是要是不同的namespace下，则sqlSession1的更新操作事务提交，不会导致sqlSession2的刷新缓存，会存在脏读              
+>装饰链：SynchronizedCache -> LoggingCache -> SerializedCache -> LruCache -> PerpetualCache   
+
+![](excutor-local-cache.awebp "")
+
+![](level1-cache-level2-cache-sqlSession.png "")
+
+* [mybatis缓存-美团](https://tech.meituan.com/2018/01/19/mybatis-cache.html)
+
+
+## 写代码不仅要写的人很喜欢（逻辑可读性），机器也很喜欢（高性能）
+
+![](mybatis-debug-column1.png "")
+
+![](mybatis-debug-query-eof.png "")
+
+
+
+MysqlIO
+
+ResultSetInternalMethods sqlQueryDirect
+
+
+ //发送查询sql packet string buff
+	    	Buffer resultPacket = sendCommand(MysqlDefs.QUERY, null, queryPacket,
+	    			false, null, 0);
+
+
+	ResultSetInternalMethods rs = readAllResults(callingStatement, maxRows, resultSetType,
+	    			resultSetConcurrency, streamResults, catalog, resultPacket,
+	    			false, -1L, cachedMetadata);
+					
+					
+					
+rowBytes[i] = rowPacket.readBytes(StringSelfDataType.STRING_LENENC);					
+NativePacketPayload rowPacket ：					
+01 31 04 75 74 66 38 04     . 1 . u t f 8 .
+75 74 66 38 04 75 74 66     u t f 8 . u t f
+38 06 6c 61 74 69 6e 31     8 . l a t i n 1
+11 6c 61 74 69 6e 31 5f     . l a t i n 1 _
+73 77 65 64 69 73 68 5f     s w e d i s h _
+63 69 0f 75 74 66 38 5f     c i . u t f 8 _
+67 65 6e 65 72 61 6c 5f     g e n e r a l _
+63 69 00 05 32 38 38 30     c i . . 2 8 8 0
+30 03 47 50 4c 01 30 08     0 . G P L . 0 .
+31 30 34 38 35 37 36 30     1 0 4 8 5 7 6 0
+02 36 30 01 31 07 31 30     . 6 0 . 1 . 1 0
+34 38 35 37 36 03 4f 46     4 8 5 7 6 . O F
+46 16 4e 4f 5f 45 4e 47     F . N O _ E N G
+49 4e 45 5f 53 55 42 53     I N E _ S U B S
+54 49 54 55 54 49 4f 4e     T I T U T I O N
+03 43 53 54 06 53 59 53     . C S T . S Y S
+54 45 4d 0f 52 45 50 45     T E M . R E P E
+41 54 41 42 4c 45 2d 52     A T A B L E - R
+45 41 44 05 32 38 38 30     E A D . 2 8 8 0
+30                          0
+					
+					
+					
+					AbstractResultsetRow
+					
+					
+					
+					0，先 this.session.execSQL(null, autoCommitFlag ? "SET autocommit=1" : "SET autocommit=0", -1, null, false, this.nullStatementResultSetFactory,
+                            null, false);
+						先做了一些前期的基础工作
+					1，先获取column的信息
+					
+```					
+03 73 65 6c 65 63 74 20     . s e l e c t  
+2a 20 66 72 6f 6d 20 65     *   f r o m   e
+64 75 5f 61 63 63 6f 75     d u _ a c c o u
+6e 74 5f 69 6e 66 6f 20     n t _ i n f o  
+77 68 65 72 65 20 75 69     w h e r e   u i
+64 20 3d 20 27 34 31 31     d   =   ' 4 1 1
+30 32 33 37 27 20 20 20     0 2 3 7 '      
+6f 72 64 65 72 20 62 79     o r d e r   b y
+20 69 64 20 61 73 63 20       i d   a s c  
+6c 69 6d 69 74 20 31        l i m i t   1
+```
+
+
+## 数据库列值如何赋值给结果实例
+```
+DefaultResultSetHandler
+
+private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
+    final ResultLoaderMap lazyLoader = new ResultLoaderMap();
+    Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
+    if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
+      final MetaObject metaObject = configuration.newMetaObject(rowValue);
+      boolean foundValues = this.useConstructorMappings;
+      if (shouldApplyAutomaticMappings(resultMap, false)) {
+        foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, columnPrefix) || foundValues;
+      }
+      foundValues = applyPropertyMappings(rsw, resultMap, metaObject, lazyLoader, columnPrefix) || foundValues;
+      foundValues = lazyLoader.size() > 0 || foundValues;
+      rowValue = foundValues || configuration.isReturnInstanceForEmptyRow() ? rowValue : null;
+    }
+    return rowValue;
+  }
+  
+    private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
+    this.useConstructorMappings = false; // reset previous mapping result
+    final List<Class<?>> constructorArgTypes = new ArrayList<>();
+    final List<Object> constructorArgs = new ArrayList<>();
+    Object resultObject = createResultObject(rsw, resultMap, constructorArgTypes, constructorArgs, columnPrefix);
+    if (resultObject != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
+      final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
+      for (ResultMapping propertyMapping : propertyMappings) {
+        // issue gcode #109 && issue #149
+        if (propertyMapping.getNestedQueryId() != null && propertyMapping.isLazy()) {
+          resultObject = configuration.getProxyFactory().createProxy(resultObject, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
+          break;
+        }
+      }
+    }
+    this.useConstructorMappings = resultObject != null && !constructorArgTypes.isEmpty(); // set current mapping result
+    return resultObject;
+  }
+  
+   private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, List<Class<?>> constructorArgTypes, List<Object> constructorArgs, String columnPrefix)
+      throws SQLException {
+    final Class<?> resultType = resultMap.getType();
+    final MetaClass metaType = MetaClass.forClass(resultType, reflectorFactory);
+    final List<ResultMapping> constructorMappings = resultMap.getConstructorResultMappings();
+    if (hasTypeHandlerForResultObject(rsw, resultType)) {
+      return createPrimitiveResultObject(rsw, resultMap, columnPrefix);
+    } else if (!constructorMappings.isEmpty()) {
+      return createParameterizedResultObject(rsw, resultType, constructorMappings, constructorArgTypes, constructorArgs, columnPrefix);
+    } else if (resultType.isInterface() || metaType.hasDefaultConstructor()) {
+      return objectFactory.create(resultType); //根据类名，创建对象
+    } else if (shouldApplyAutomaticMappings(resultMap, false)) {
+      return createByConstructorSignature(rsw, resultType, constructorArgTypes, constructorArgs);
+    }
+    throw new ExecutorException("Do not know how to create an instance of " + resultType);
+  }
+
+private boolean applyAutomaticMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject, String columnPrefix) throws SQLException {
+    List<UnMappedColumnAutoMapping> autoMapping = createAutomaticMappings(rsw, resultMap, metaObject, columnPrefix);
+    boolean foundValues = false;
+    if (!autoMapping.isEmpty()) {
+      for (UnMappedColumnAutoMapping mapping : autoMapping) {
+        final Object value = mapping.typeHandler.getResult(rsw.getResultSet(), mapping.column);
+        if (value != null) {
+          foundValues = true;
+        }
+        if (value != null || (configuration.isCallSettersOnNulls() && !mapping.primitive)) {
+          // gcode issue #377, call setter on nulls (value is not 'found')
+          metaObject.setValue(mapping.property, value);
+        }
+      }
+    }
+    return foundValues;
+  }
+
+
+```
+
+## mybatis查询逻辑，解析mysql应答数据，生成mapper returnType类实例，并对应列和类属性赋值
+
+>1，DefaultSqlSession.selectOne(String statement, Object parameter)->selectList(statement, parameter)->CachingExecutor.query(ms, wrapCollection(parameter), rowBounds, handler)->BaseExecutor.query->queryFromDatabase->SimpleExecutor.doQuery->RoutingStatmentHandler.query->PreparedStatementHandler.query->ps.execute()[执行sql]->DefaultResultSetHandler.handleResultSets->handleRowValues->handleRowValuesForSimpleResultMap->getRowValue{Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix); foundValues = applyAutomaticMappings(rsw, resultMap, metaObject, columnPrefix) || foundValues;}->applyAutomaticMappings{metaObject.setValue(mapping.property, value);//metaObject是由createResultObject方法根据mapper的returnType类生成的，mapping.property是mapper的列对应的返回类对象的属性名，value是通过解析mysql返回的buffer的十六进制数据得到的对应列的数值，此处是把数据库返回的列的值，设置给返回类对象的相应属性}
+
+>2，DefaultResultSetHandler.createResultObject
+```
+    final Class<?> resultType = resultMap.getType();
+    final MetaClass metaType = MetaClass.forClass(resultType, reflectorFactory);
+    objectFactory.create(resultType);
+```
+
+![](mybatis-get-row-value-set-returnType-value.png "")
+
+![](mybatis-DefaultSqlSession-selectOne.png  "")
+
+![](mybatis-applyAutomaticMappings-mapping-property.png "")
+
+## column，value，property
+>1，column->valueIndex-十六进制value->解析成正常数据value
+>2，column->property->设置返回对象属性的值
+>3，column是数据表列名信息，property是DTO类属性名
+
+![](mybatis-autoMapping-column-property.png "")
+
+![](mybatis-DefaultColumnDefinition-columnLabelToIndex-for-value.png "")
+
+## 发送select的mysql packet
+```					
+03 73 65 6c 65 63 74 20     . s e l e c t  
+2a 20 66 72 6f 6d 20 65     *   f r o m   e
+64 75 5f 61 63 63 6f 75     d u _ a c c o u
+6e 74 5f 69 6e 66 6f 20     n t _ i n f o  
+77 68 65 72 65 20 75 69     w h e r e   u i
+64 20 3d 20 27 34 31 31     d   =   ' 4 1 1
+30 32 33 37 27 20 20 20     0 2 3 7 '      
+6f 72 64 65 72 20 62 79     o r d e r   b y
+20 69 64 20 61 73 63 20       i d   a s c  
+6c 69 6d 69 74 20 31        l i m i t   1
+```
+
+![](mybatis-select-mysql-packet.png "应答0x15，其实是列数21")
+
+
+![](mybatis-set-autocommit-1-mysql-packet.png "开启事务隐式自动提交")
+
+![](mybatis-set-sql-mode-mysql-packet.png "")
+
+## #{}防止sql注入
+动态 SQL 是 mybatis 的强大特性之一，也是它优于其他 ORM 框架的一个重要原因。mybatis 在对 sql 语句进行预编译之前，会对 sql 进行动态解析，解析为一个 BoundSql 对象，也是在此处对动态 SQL 进行处理的。
+
+在动态 SQL 解析阶段， #{ } 和 ${ } 会有不同的表现：
+
+>1，#{ } 解析为一个 JDBC 预编译语句（prepared statement）的参数标记符。
+>2，${ } 仅仅为一个纯碎的 string 替换，在动态 SQL 解析阶段将会进行变量替换  
+
+例如，sqlMap 中如下的 sql 语句
+```
+select * from user where name = #{name};
+```
+解析为：
+```
+select * from user where name = ?;
+```
+一个 #{ } 被解析为一个参数占位符 ? 。
+
+而，
+
+${ } 仅仅为一个纯碎的 string 替换，在动态 SQL 解析阶段将会进行变量替换
+
+例如，sqlMap 中如下的 sql
+```
+select * from user where name = '${name}';
+```
+当我们传递的参数为 "ruhua" 时，上述 sql 的解析为：
+```
+select * from user where name = "ruhua";
+```
+预编译之前的 SQL 语句已经不包含变量 name 了。
+
+综上所得， ${ } 的变量的替换阶段是在动态 SQL 解析阶段，而 #{ }的变量的替换是在 DBMS 中。
+
+![](mybatis-CachingExecutor-query-boundSql-CacheKey.png "#{}和${}预编译")

@@ -1191,7 +1191,7 @@ UNSAFE_END
 
 UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapObject(JNIEnv *env, jobject unsafe, jobject obj, jlong offset, jobject e_h, jobject x_h))
   UnsafeWrapper("Unsafe_CompareAndSwapObject");
-  oop x = JNIHandles::resolve(x_h);// 新值
+  oop x = JNIHandles::resolve(x_h);// 当前值
   oop e = JNIHandles::resolve(e_h);// 预期值
   oop p = JNIHandles::resolve(obj);
   HeapWord* addr = (HeapWord *)index_oop_from_field_offset_long(p, offset);// 在内存中的具体位置

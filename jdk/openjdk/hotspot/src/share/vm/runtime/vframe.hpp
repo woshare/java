@@ -53,7 +53,7 @@
 
 class vframe: public ResourceObj {
  protected:
-  frame        _fr;      // Raw frame behind the virtual frame.
+  frame        _fr;      // Raw frame behind the virtual frame. 物理栈帧
   RegisterMap  _reg_map; // Register map for the raw frame (used to handle callee-saved registers).
   JavaThread*  _thread;  // The thread owning the raw frame.
 

@@ -3846,7 +3846,8 @@ void G1CollectedHeap::log_gc_footer(double pause_time_sec) {
   }
   gclog_or_tty->flush();
 }
-
+/*YGC
+*/
 bool
 G1CollectedHeap::do_collection_pause_at_safepoint(double target_pause_time_ms) {
   assert_at_safepoint(true /* should_be_vm_thread */);
