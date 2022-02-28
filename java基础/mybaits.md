@@ -242,8 +242,16 @@ ps:执行1.1,1.2，再执行2.1，是看不到1.2的操作的，只有再执行1
 >3，由于二级缓存是从MappedStatement中获取，是存在于全局配置，如果被多个CachingExecutor获取到，则一定会出现线程安全问题导致脏读，所以MyBatis为解决这个问题，在查询的过程中提供了TransactionalCacheManager作为事务缓存管理器   
 >4，二级缓存构建在一级缓存之上，一级缓存是和SqlSession绑定，而二级缓存是和Mapper具体的命名空间绑定，二级缓存是全局性的，一个Mapper中有一个Cache，相同的Mapper中多个不同的MappedStatement共用一个Cache      
 >5，二级缓存-》一级缓存-》数据库：CachingExecutor#query()       
->6，一级缓存，在同一的sqlSession作用范围下，如果中间操作sqlSession执行了commit操作，其实也就是（删除，更新，新增）那么会清除sqlSession的缓存，保障缓存中拿到的数据一定是最新的，避免脏读。但是是局限在同一sqlSession下，当sqlSession2更新了数据，sqlSession1就可能还会是脏读  
->7，二级缓存是基于namespace的，在相同的namespace下不同的sqlSession更新数据库并提交事务之后，sqlSession1会导致sqlSession2刷新二级缓存，sqlSession不会存在脏读问题，但是要是不同的namespace下，则sqlSession1的更新操作事务提交，不会导致sqlSession2的刷新缓存，会存在脏读              
+>6，一级缓存，在同一的sqlSession作用范围下，如果中间操作sqlSession执行了commit操作，其实也就是（删除，更新，新增）那么会清除sqlSession的缓存，保障缓存中拿到的数据一定是最新的，避免脏读。但是是局限在同一sqlSession下，当sqlSession2更新了数据，sqlSession1就可能还会是脏读，默认开启      
+>7，二级缓存是基于namespace的，在相同的namespace下不同的sqlSession更新数据库并提交事务之后，sqlSession1会导致sqlSession2刷新二级缓存，sqlSession不会存在脏读问题，但是要是不同的namespace下（特别是联表的情况下），则sqlSession1的更新操作事务提交，不会导致sqlSession2的刷新缓存，会存在脏读，**例如，mapper1缓存了T1和T2的联表结果，在mapper2下修改了T2，mapper1还获取的是没改之前的T2数据，即为脏读** ，适用于读多写少场景，并且要求结果集是可序列化的，默认不开启
+
+### MyBatis官方提供的第三方缓存
+<dependency>
+    <groupId>org.mybatis.caches</groupId>
+    <artifactId>mybatis-redis</artifactId>
+    <version>1.0.0-beta2</version>
+</dependency>
+
 >装饰链：SynchronizedCache -> LoggingCache -> SerializedCache -> LruCache -> PerpetualCache   
 
 ![](excutor-local-cache.awebp "")

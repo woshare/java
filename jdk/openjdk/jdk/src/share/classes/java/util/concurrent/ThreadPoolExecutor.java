@@ -1115,7 +1115,8 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     return null;
                 continue;
             }
-
+						//所谓的keepAliveTime 保活，worker while getTask，也就是当没有任务的时候，
+	        // 会阻塞keepAliveTime时间，而不会立马执行 runWork中 processWorkerExit 线程退出逻辑
             try {//基于阻塞队列，来实现对任务写入和获取，在满或空的时候，阻塞线程池，而不需要线程池本身去实现，阻塞通知机制了
                 Runnable r = timed ?
                     workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
@@ -1365,7 +1366,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         this.corePoolSize = corePoolSize;
         this.maximumPoolSize = maximumPoolSize;
         this.workQueue = workQueue;
-        this.keepAliveTime = unit.toNanos(keepAliveTime);
+        this.keepAliveTime = unit.toNanos(keepAliveTime);//看getTask，等一定时间去获取新的task
         this.threadFactory = threadFactory;
         this.handler = handler;
     }

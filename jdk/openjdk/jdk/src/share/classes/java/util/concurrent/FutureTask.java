@@ -72,6 +72,24 @@ public class FutureTask<V> implements RunnableFuture<V> {
      * Style note: As usual, we bypass overhead of using
      * AtomicXFieldUpdaters and instead directly use Unsafe intrinsics.
      */
+    /**
+     * 结合使用方式查看这个相关继承和实现 ThreadPoolExecutor extends AbstractExecutorService AbstractExecutorService implements ExecutorService
+     *
+     * 使用方式1
+     *  Future<String> future = executor.submit(new Callable<String>() {
+     *             public String call() {
+     *                 return searcher.search(target);
+     *             }});
+     *  future.get()
+     *
+     *  使用方式2
+     *  FutureTask<String> future = new FutureTask<String>(new Callable<String>() {
+     *             public String call() {
+     *                 return searcher.search(target);
+     *             }
+     *         });
+     *         executor.execute(future);
+     */
 
     /**
      * The run state of this task, initially NEW.  The run state
@@ -103,6 +121,10 @@ public class FutureTask<V> implements RunnableFuture<V> {
     /** The result to return or exception to throw from get() */
     private Object outcome; // non-volatile, protected by state reads/writes
     /** The thread running the callable; CASed during run() */
+    /**
+     * UNSAFE.compareAndSwapObject(this, runnerOffset,
+     *                                          null, Thread.currentThread())
+     */
     private volatile Thread runner;
     /** Treiber stack of waiting threads */
     private volatile WaitNode waiters;
